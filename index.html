@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDACADEMY // Ultra Minimal Savaş Üssü V56</title>
+    <style>
+        :root {
+            --bg-main: #090d16;
+            --bg-panel: #111827;
+            --bg-card: #161f33;
+            --bg-hover: #1e293b;
+            --border: #1f2937;
+            --teal: #14b8a6;
+            --teal-glow: rgba(20, 184, 166, 0.15);
+            --gold: #f59e0b;
+            --gold-glow: rgba(245, 158, 11, 0.15);
+            --indigo: #6366f1;
+            --indigo-glow: rgba(99, 102, 241, 0.15);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.18);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.18);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* 🏥 ÜST MİNİMAL BAR */
+        .app-header {
+            height: 58px;
+            background-color: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            flex-shrink: 0;
+        }
+        .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.05rem; color: var(--teal); letter-spacing: 0.5px; }
+        .brand span.sub { font-size: 0.72rem; background: var(--teal-glow); border: 1px solid var(--teal); padding: 2px 8px; border-radius: 12px; }
+
+        .top-nav { display: flex; gap: 5px; flex-wrap: wrap; }
+        .top-nav-btn {
+            background: transparent; color: var(--text-muted); border: none; padding: 8px 13px; border-radius: 8px;
+            font-size: 0.83rem; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px;
+        }
+        .top-nav-btn:hover { color: var(--text-main); background: var(--bg-hover); }
+        .top-nav-btn.active { background: var(--teal-glow); color: var(--teal); border: 1px solid rgba(20, 184, 166, 0.4); }
+
+        .api-quick-bar { display: flex; align-items: center; gap: 6px; }
+        .api-quick-bar input {
+            background: var(--bg-main); border: 1px solid var(--border); color: var(--text-main);
+            padding: 6px 10px; border-radius: 6px; font-size: 0.78rem; width: 165px; outline: none;
+        }
+        .api-quick-bar input:focus { border-color: var(--teal); }
+
+        /* 📐 ANA UYGULAMA GÖVDESİ */
+        .app-body { display: flex; flex: 1; height: calc(100vh - 58px); overflow: hidden; }
+
+        .left-rail {
+            width: 56px; background: var(--bg-panel); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; align-items: center; padding: 14px 0; gap: 10px; flex-shrink: 0;
+        }
+        .rail-icon {
+            width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--text-muted); font-size: 1.1rem; transition: 0.2s; border: 1px solid transparent;
+        }
+        .rail-icon:hover { background: var(--bg-hover); color: var(--text-main); }
+        .rail-icon.active { background: var(--teal-glow); color: var(--teal); border-color: var(--teal); }
+
+        /* 🖥️ SEKMELİ GÖRÜNÜM ALANI */
+        .workspace { flex: 1; padding: 16px 20px; overflow-y: auto; height: 100%; }
+        .tab-view { display: none; height: 100%; }
+        .tab-view.active { display: flex; flex-direction: column; gap: 14px; }
+
+        /* 🧱 GENEL KART VE BUTON STİLLERİ */
+        .panel-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+        .panel-title {
+            font-size: 0.92rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .btn {
+            background: var(--teal); color: #000; font-weight: 700; border: none; padding: 7px 14px;
+            border-radius: 7px; font-size: 0.8rem; cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 5px;
+        }
+        .btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-indigo { background: var(--indigo); color: #fff; }
+        .btn-gold { background: var(--gold); color: #000; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-success { background: var(--success); color: #000; }
+        .btn-ghost { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); }
+        .btn-ghost:hover { border-color: var(--teal); }
+        .btn-ghost.active-mode { background: var(--teal-glow); color: var(--teal); border-color: var(--teal); }
+
+        input, select {
+            background: var(--bg-main); border: 1px solid var(--border); color: var(--text-main);
+            padding: 7px 10px; border-radius: 7px; font-size: 0.82rem; outline: none;
+        }
+        input:focus, select:focus { border-color: var(--teal); }
+
+        /* 📊 1. SEKME: TAM EKRAN HAFTALIK PROGRAM */
+        .full-schedule-layout { display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; }
+
+        .top-rings-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex-shrink: 0; }
+        @media (max-width: 900px) { .top-rings-row { grid-template-columns: 1fr; } }
+        .ring-card {
+            background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; padding: 12px 18px;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .ring-card.teal { border-color: rgba(20, 184, 166, 0.4); background: linear-gradient(135deg, rgba(20, 184, 166, 0.08), var(--bg-panel)); }
+        .ring-card.gold { border-color: rgba(245, 158, 11, 0.4); background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), var(--bg-panel)); }
+        .ring-card.indigo { border-color: rgba(99, 102, 241, 0.4); background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), var(--bg-panel)); }
+
+        .circle-progress {
+            width: 52px; height: 52px; border-radius: 50%; border: 4px solid var(--teal);
+            display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.88rem; color: var(--teal); flex-shrink: 0;
+        }
+        .ring-card.gold .circle-progress { border-color: var(--gold); color: var(--gold); }
+        .ring-card.indigo .circle-progress { border-color: var(--indigo); color: var(--indigo); }
+
+        .ring-info h4 { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+        .ring-info .big-val { font-size: 1.02rem; font-weight: 800; color: var(--text-main); margin: 2px 0 5px 0; }
+
+        /* 📅 HAFTALIK PROGRAM TABLOSU (TAM GENİŞLİK) */
+        .schedule-wrapper {
+            background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+            display: flex; flex-direction: column; flex: 1; min-height: 0;
+        }
+        .schedule-controls {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+            margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+        }
+        .schedule-table-container { overflow: auto; flex: 1; }
+        .med-schedule-table { width: 100%; border-collapse: separate; border-spacing: 6px; }
+        .med-schedule-table th {
+            text-align: center; font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;
+            padding: 6px; font-weight: 700; letter-spacing: 0.5px;
+        }
+        .med-schedule-table td { vertical-align: top; width: 13.1%; }
+        .med-schedule-table td.time-col {
+            width: 8%; vertical-align: middle; text-align: center; font-size: 0.78rem; font-weight: 800;
+            color: var(--gold); background: var(--bg-card); border-radius: 8px; padding: 6px; border: 1px solid var(--border);
+        }
+
+        .slot-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 9px; padding: 8px;
+            min-height: 82px; position: relative; transition: 0.2s; display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .slot-card:hover { border-color: rgba(20, 184, 166, 0.5); }
+        .slot-card.status-done { background: var(--success-glow) !important; border-color: var(--success) !important; }
+        .slot-card.status-done .slot-text { text-decoration: line-through; opacity: 0.8; }
+        .slot-card.status-missed { background: var(--danger-glow) !important; border-color: var(--danger) !important; }
+
+        .slot-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; gap: 2px; }
+        .slot-badge { font-size: 0.65rem; font-weight: 800; padding: 2px 7px; border-radius: 10px; text-transform: uppercase; }
+        .b-konu { background: var(--teal-glow); color: #2dd4bf; border: 1px solid var(--teal); }
+        .b-test { background: var(--indigo-glow); color: #818cf8; border: 1px solid var(--indigo); }
+        .b-deneme { background: var(--gold-glow); color: #fbbf24; border: 1px solid var(--gold); }
+        .b-tekrar { background: rgba(14, 165, 233, 0.18); color: #38bdf8; border: 1px solid #0ea5e9; }
+
+        .slot-actions { display: flex; gap: 3px; }
+        .act-btn {
+            width: 20px; height: 20px; border-radius: 5px; border: 1px solid var(--border); background: var(--bg-main);
+            color: var(--text-muted); font-size: 0.68rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .act-btn.ok:hover, .slot-card.status-done .act-btn.ok { background: var(--success); color: #000; border-color: var(--success); font-weight: bold; }
+        .act-btn.fail:hover, .slot-card.status-missed .act-btn.fail { background: var(--danger); color: #fff; border-color: var(--danger); font-weight: bold; }
+        .act-btn.cal:hover { background: var(--gold); color: #000; border-color: var(--gold); }
+
+        .slot-text { font-size: 0.8rem; color: var(--text-main); line-height: 1.4; outline: none; word-break: break-word; flex: 1; }
+
+        .coach-box {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px;
+            font-size: 0.82rem; line-height: 1.65; color: var(--text-main); overflow-y: auto;
+        }
+        .coach-box h3, .coach-box h4 { color: var(--gold); margin: 8px 0 4px 0; font-size: 0.88rem; }
+        .coach-box li { margin-left: 14px; margin-bottom: 5px; }
+
+        /* ⏱️ 2. SEKME: DEV ODAK & KRONOMETRE MERKEZİ */
+        .timer-hero-card {
+            background: radial-gradient(circle at top, rgba(20, 184, 166, 0.12), var(--bg-panel) 70%);
+            border: 1px solid rgba(20, 184, 166, 0.35); border-radius: 16px; padding: 28px;
+            text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+        }
+        .giant-clock {
+            font-size: 5.5rem; font-weight: 900; font-family: 'JetBrains Mono', monospace;
+            color: var(--teal); letter-spacing: 4px; text-shadow: 0 0 25px rgba(20, 184, 166, 0.35); line-height: 1; margin: 8px 0;
+        }
+        .days-big-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; margin-top: 10px; }
+        @media (max-width: 900px) { .days-big-grid { grid-template-columns: repeat(2, 1fr); } }
+        .day-stat-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-top: 3px solid var(--teal);
+            border-radius: 12px; padding: 16px 10px; text-align: center; transition: 0.2s;
+        }
+        .day-stat-card:hover { transform: translateY(-2px); border-color: var(--teal); }
+        .day-stat-card .d-name { font-size: 0.78rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .day-stat-card .d-val { font-size: 1.35rem; font-weight: 800; color: var(--text-main); margin-top: 6px; }
+        .day-stat-card .d-sub { font-size: 0.72rem; color: var(--teal); margin-top: 3px; }
+
+        /* 📈 3. SEKME: DENEME TAKİP */
+        .mock-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px; margin: 10px 0; }
+        .mock-sub-card { background: var(--bg-card); border: 1px solid var(--border); border-top: 3px solid var(--teal); border-radius: 8px; padding: 10px; }
+        .mock-sub-card h5 { font-size: 0.76rem; color: var(--gold); margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .dy-row { display: flex; gap: 6px; }
+        .dy-row input { width: 100%; text-align: center; padding: 5px; }
+
+        /* 📚 4. SEKME: MÜFREDAT & DÜZGÜN KAYNAK KARTLARI */
+        .curr-grid { display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 16px; height: 100%; min-height: 0; }
+        @media (max-width: 1100px) { .curr-grid { grid-template-columns: 1fr; } }
+        .curr-col { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px; overflow-y: auto; }
+        .acc-header {
+            background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--teal);
+            padding: 8px 12px; border-radius: 7px; font-size: 0.84rem; font-weight: 700; cursor: pointer;
+            display: flex; justify-content: space-between; margin-bottom: 6px;
+        }
+        .acc-body { padding: 4px 8px 10px 12px; display: none; }
+        .topic-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; margin-bottom: 5px; color: var(--text-muted); cursor: pointer; }
+        .topic-row input:checked + span { color: var(--teal); text-decoration: line-through; }
+
+        .book-rec-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--indigo);
+            border-radius: 10px; padding: 12px; margin-bottom: 10px;
+        }
+        .book-rec-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .book-rec-title { font-size: 0.9rem; font-weight: 800; color: var(--gold); }
+        .book-rec-desc { font-size: 0.78rem; color: var(--text-main); line-height: 1.5; margin-bottom: 4px; }
+        .book-rec-target { font-size: 0.73rem; color: var(--teal); font-weight: 600; }
+
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+        .data-table th, .data-table td { border-bottom: 1px solid var(--border); padding: 9px 10px; text-align: left; }
+        .data-table th { color: var(--teal); font-size: 0.76rem; text-transform: uppercase; background: var(--bg-card); position: sticky; top: 0; z-index: 2; }
+
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <!-- 🏥 ÜST MİNİMAL BAR -->
+    <header class="app-header">
+        <div class="brand">
+            <span>🩺 MEDACADEMY</span>
+            <span class="sub">YKS SAYISAL V56</span>
+        </div>
+
+        <nav class="top-nav">
+            <button class="top-nav-btn active" onclick="switchTab('tab-dashboard', 0)">📊 Haftalık Program</button>
+            <button class="top-nav-btn" onclick="switchTab('tab-timer', 1)">⏱️ Odak & Kronometre</button>
+            <button class="top-nav-btn" onclick="switchTab('tab-mock', 2)">📈 Deneme & AI Analiz</button>
+            <button class="top-nav-btn" onclick="switchTab('tab-curriculum', 3)">📚 Müfredat & Kaynaklar</button>
+            <button class="top-nav-btn" onclick="switchTab('tab-atlas', 4)">🏛️ YÖK Atlas & Hedef</button>
+            <button class="top-nav-btn" onclick="switchTab('tab-notes', 5)">🧠 Hap Not & Motivasyon</button>
+        </nav>
+
+        <div class="api-quick-bar">
+            <input type="password" id="uiApiKeyInput" placeholder="Gemini API Key (AIzaSy...)">
+            <button class="btn" onclick="saveApiKeyToSystem()" style="padding: 6px 10px;">Kaydet</button>
+        </div>
+    </header>
+
+    <div class="app-body">
+        <!-- SOL DİKEY İKON BAR -->
+        <aside class="left-rail">
+            <div class="rail-icon active" title="Haftalık Program" onclick="switchTab('tab-dashboard', 0)">📅</div>
+            <div class="rail-icon" title="Odak & Kronometre" onclick="switchTab('tab-timer', 1)">⏱️</div>
+            <div class="rail-icon" title="Deneme Takip & Analiz" onclick="switchTab('tab-mock', 2)">📈</div>
+            <div class="rail-icon" title="Müfredat & Kaynaklar" onclick="switchTab('tab-curriculum', 3)">📚</div>
+            <div class="rail-icon" title="YÖK Atlas Simülatör" onclick="switchTab('tab-atlas', 4)">🏛️</div>
+            <div class="rail-icon" title="Hap Notlar & Odak" onclick="switchTab('tab-notes', 5)">🧠</div>
+        </aside>
+
+        <!-- ANA ÇALIŞMA EKRANI -->
+        <main class="workspace">
+
+            <!-- ==========================================
+                 1. SEKME: TAM EKRAN SADECE HAFTALIK PROGRAM
+                 ========================================== -->
+            <section id="tab-dashboard" class="tab-view active">
+                <div class="full-schedule-layout">
+                    
+                    <div class="top-rings-row">
+                        <div class="ring-card teal">
+                            <div class="circle-progress" id="ringWeeklyStatus">0/0</div>
+                            <div class="ring-info">
+                                <h4>Haftalık Ders Takibi</h4>
+                                <div class="big-val" id="ringWeeklyText">0 Tamamlandı</div>
+                                <span style="font-size:0.72rem; color:var(--danger);" id="ringMissedText">0 Çalışılamadı (Telafi)</span>
+                            </div>
+                        </div>
+                        <div class="ring-card gold">
+                            <div class="circle-progress" id="ringTotalHours">0S</div>
+                            <div class="ring-info">
+                                <h4>Bu Hafta Çalışılan Süre</h4>
+                                <div class="big-val" id="ringTotalHoursText">0 Saat 0 Dk</div>
+                                <button class="btn btn-gold" style="padding:3px 8px; font-size:0.7rem;" onclick="switchTab('tab-timer', 1)">⏱️ Kronometreyi Aç</button>
+                            </div>
+                        </div>
+                        <div class="ring-card indigo">
+                            <div class="circle-progress" id="ringCurrPercent">%0</div>
+                            <div class="ring-info">
+                                <h4>Sayısal Müfredat</h4>
+                                <div class="big-val" id="ringCurrText">TYT %0 | AYT %0</div>
+                                <button class="btn btn-indigo" style="padding:3px 8px; font-size:0.7rem;" onclick="switchTab('tab-curriculum', 3)">Konu & Kaynak</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 📅 TAM GENİŞLİK HAFTALIK PROGRAM TABLOSU -->
+                    <div class="schedule-wrapper">
+                        <div class="schedule-controls">
+                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                <strong style="font-size:0.95rem; color:var(--teal);" id="programHeaderBtn">📅 Haftalık Ders Programı</strong>
+                                <span style="font-size:0.76rem; color:var(--text-muted);">Başlangıç:</span>
+                                <input type="text" id="userStartHourInput" value="08:30" style="width:68px; padding:5px 8px;">
+                                <select id="userDailyBlockCount" style="padding:5px 8px;">
+                                    <option value="2">Günde 2 Blok (4 Saat)</option>
+                                    <option value="3" selected>Günde 3 Blok (6 Saat)</option>
+                                    <option value="4">Günde 4 Blok (8 Saat)</option>
+                                    <option value="5">Günde 5 Blok (10 Saat)</option>
+                                </select>
+                                <select id="userWorkStage" style="padding:5px 8px;">
+                                    <option value="STAGE_1">1. Faz: Altyapı (Konu + Test)</option>
+                                    <option value="STAGE_2" selected>2. Faz: Gelişim (Konu + Branş Denemesi + Tekrar)</option>
+                                    <option value="STAGE_3">3. Faz: Derece (Yoğun Deneme + Seri Tekrar)</option>
+                                </select>
+                                <button class="btn" id="btnGenerateWeekly" onclick="runLiveGeminiAI('weekly')">⚡ AI İle Yeni Haftayı Kur</button>
+                            </div>
+
+                            <button class="btn btn-gold" onclick="exportScheduleToICS()">
+                                📅 Tüm Haftayı Google Takvim'e Ekle
+                            </button>
+                        </div>
+
+                        <div class="schedule-table-container">
+                            <table class="med-schedule-table">
+                                <thead>
+                                    <tr>
+                                        <th>BLOK</th>
+                                        <th>Pazartesi</th>
+                                        <th>Salı</th>
+                                        <th>Çarşamba</th>
+                                        <th>Perşembe</th>
+                                        <th>Cuma</th>
+                                        <th>Cumartesi</th>
+                                        <th>Pazar</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="scheduleMatrixBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 2. SEKME: DEV ODAK & KRONOMETRE MERKEZİ
+                 ========================================== -->
+            <section id="tab-timer" class="tab-view">
+                <div class="timer-hero-card">
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn btn-ghost active-mode" id="modeBtnStopwatch" onclick="setTimerMode('stopwatch')">📈 Kronometre Modu (Sıfırdan İleri Sayar)</button>
+                        <button class="btn btn-ghost" id="modeBtnCountdown" onclick="setTimerMode('countdown')">⏳ Geri Sayım Modu (Süre Kurmalı)</button>
+                    </div>
+
+                    <div id="countdownSetupBar" style="display:none; gap:8px; align-items:center; margin-top:4px;">
+                        <span style="font-size:0.85rem; color:var(--text-muted);">Hedef Süre (Dk):</span>
+                        <input type="number" id="manualMinutes" placeholder="Örn: 120" value="120" style="width:90px; text-align:center;">
+                        <button class="btn btn-ghost" onclick="applyCountdownMinutes()">Süreyi Kur</button>
+                    </div>
+
+                    <div class="giant-clock" id="timerDisplay">00:00:00</div>
+
+                    <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; align-items:center;">
+                        <button class="btn btn-success" id="startBtn" style="padding:12px 28px; font-size:1rem;">▶ Dersi Başlat</button>
+                        <button class="btn btn-gold" id="pauseBtn" style="display:none; padding:12px 28px; font-size:1rem;">⏸ Duraklat</button>
+                        
+                        <div style="display:flex; align-items:center; gap:8px; background:var(--bg-card); padding:6px 12px; border-radius:10px; border:1px solid var(--teal);">
+                            <span style="font-size:0.82rem; color:var(--teal); font-weight:700;">Kaydedilecek Gün:</span>
+                            <select id="timerTargetDaySelect" style="padding:7px 10px; font-weight:700;">
+                                <option value="pazartesi">Pazartesi</option>
+                                <option value="sali">Salı</option>
+                                <option value="carsamba">Çarşamba</option>
+                                <option value="persembe">Perşembe</option>
+                                <option value="cuma">Cuma</option>
+                                <option value="cumartesi">Cumartesi</option>
+                                <option value="pazar">Pazar</option>
+                            </select>
+                            <button class="btn btn-indigo" onclick="finishSessionAndLog()" style="padding:10px 18px; font-size:0.9rem;">🏁 Dersi Bitir & Güne Kaydet</button>
+                        </div>
+
+                        <button class="btn btn-danger" id="resetBtn" style="padding:12px 20px; font-size:0.95rem;">↺ Sıfırla</button>
+                    </div>
+                </div>
+
+                <div class="panel-card" style="flex:1;">
+                    <div class="panel-title">
+                        <span>📊 Günlük & Haftalık Kayıtlı Çalışma Sürelerin</span>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <select id="statsMonthSelect" onchange="loadWorkHoursDisplay()">
+                                <option value="Ekim">Ekim</option><option value="Kasim">Kasım</option><option value="Aralik">Aralık</option>
+                                <option value="Ocak">Ocak</option><option value="Subat">Şubat</option><option value="Mart">Mart</option>
+                                <option value="Nisan">Nisan</option><option value="Mayis">Mayıs</option><option value="Haziran">Haziran</option>
+                            </select>
+                            <select id="statsWeekSelect" onchange="loadWorkHoursDisplay()">
+                                <option value="1">1. Hafta</option><option value="2">2. Hafta</option>
+                                <option value="3">3. Hafta</option><option value="4">4. Hafta</option>
+                            </select>
+                            <span id="weeklyTotalHoursBadge" style="background:var(--teal); color:#000; padding:6px 14px; border-radius:10px; font-weight:800; font-size:0.88rem;">Haftalık Toplam: 0 Saat 0 Dk</span>
+                        </div>
+                    </div>
+
+                    <div class="days-big-grid">
+                        <div class="day-stat-card"><div class="d-name">Pazartesi</div><div class="d-val" id="wh-pazartesi">0 Dk</div><div class="d-sub">Kayıtlı Süre</div></div>
+                        <div class="day-stat-card"><div class="d-name">Salı</div><div class="d-val" id="wh-sali">0 Dk</div><div class="d-sub">Kayıtlı Süre</div></div>
+                        <div class="day-stat-card"><div class="d-name">Çarşamba</div><div class="d-val" id="wh-carsamba">0 Dk</div><div class="d-sub">Kayıtlı Süre</div></div>
+                        <div class="day-stat-card"><div class="d-name">Perşembe</div><div class="d-val" id="wh-persembe">0 Dk</div><div class="d-sub">Kayıtlı Süre</div></div>
+                        <div class="day-stat-card"><div class="d-name">Cuma</div><div class="d-val" id="wh-cuma">0 Dk</div><div class="d-sub">Kayıtlı Süre</div></div>
+                        <div class="day-stat-card"><div class="d-name">Cumartesi</div><div class="d-val" id="wh-cumartesi">0 Dk</div><div class="d-sub">Kayıtlı Süre</div></div>
+                        <div class="day-stat-card"><div class="d-name">Pazar</div><div class="d-val" id="wh-pazar">0 Dk</div><div class="d-sub">Kayıtlı Süre</div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 3. SEKME: DENEME TAKİP & AI ANALİZ (SOSYAL DAHİL)
+                 ========================================== -->
+            <section id="tab-mock" class="tab-view">
+                <div class="panel-card">
+                    <div class="panel-title">
+                        <span>📈 Deneme Net Girişi (TYT 120 Soru Sosyal Dahil & AYT Sayısal 80 Soru)</span>
+                        <span id="liveCalculatedMockNet" style="color:var(--gold); font-size:1rem; font-weight:800;">Toplam Net: 0.00</span>
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                        <select id="mockTypeSelect" onchange="renderMockSubjectInputs()">
+                            <option value="TYT">📚 TYT Genel Denemesi (Türkçe + Sosyal + Mat + Geo + Fen = 120 Soru)</option>
+                            <option value="AYT">📐 AYT Sayısal Denemesi (Mat + Geo + Fiz + Kim + Biy = 80 Soru)</option>
+                        </select>
+                        <input type="text" id="mockNameInput" placeholder="Deneme Adı (Örn: 3D Türkiye Geneli - 1)" style="flex:1;">
+                        <button class="btn" onclick="saveMockExamResult()">💾 Denemeyi Kaydet</button>
+                        <button class="btn btn-indigo" onclick="runLiveGeminiAI('mock_analysis')">🧠 Son Denememi AI İle Analiz Et</button>
+                    </div>
+
+                    <div class="mock-grid" id="mockSubjectInputsContainer"></div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:14px; flex:1; min-height:0;">
+                    <div class="panel-card" style="overflow-y:auto;">
+                        <div class="panel-title"><span>📋 Kayıtlı Deneme Geçmişin</span></div>
+                        <table class="data-table">
+                            <thead><tr><th>Tarih</th><th>Tür</th><th>Yayın</th><th>Ders Bazlı Netler</th><th>Toplam Net</th><th>Sil</th></tr></thead>
+                            <tbody id="mockHistoryTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="panel-card" style="display:flex; flex-direction:column;">
+                        <div class="panel-title"><span>🩺 AI Deneme Teşhis & Net Artırma Reçetesi</span></div>
+                        <div class="coach-box" id="aiMockAnalysisOutput" style="max-height:100%; flex:1;">
+                            Denemeni kaydedip "AI İle Analiz Et" butonuna bastığında; hangi derste bilgi eksiğin, hangi derste dikkat hatan olduğu ve bu hafta kaç branş denemesi çözmen gerektiği burada listelenecek...
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 4. SEKME: MÜFREDAT & DÜZGÜN KAYNAK KARTLARI
+                 ========================================== -->
+            <section id="tab-curriculum" class="tab-view">
+                <div class="curr-grid">
+                    <div class="curr-col">
+                        <div class="panel-title">
+                            <span>📚 TYT Sayısal & Geometri</span>
+                            <span id="tytLevelPercent" style="color:var(--teal);">%0</span>
+                        </div>
+                        <div id="tytSubjectsContainer"></div>
+                    </div>
+
+                    <div class="curr-col">
+                        <div class="panel-title">
+                            <span>📐 AYT Sayısal & Geometri</span>
+                            <span id="aytLevelPercent" style="color:var(--indigo);">%0</span>
+                        </div>
+                        <div id="aytSubjectsContainer"></div>
+                    </div>
+
+                    <div class="curr-col" style="display:flex; flex-direction:column; gap:14px;">
+                        <div>
+                            <div class="panel-title"><span>📖 Nokta Atışı Kaynak Kitap Önerici</span></div>
+                            <div style="display:flex; gap:6px; margin-bottom:8px;">
+                                <select id="bookLessonSelect" onchange="renderCuratedBooks()" style="flex:1;"></select>
+                                <select id="levelSelect" onchange="renderCuratedBooks()" style="flex:1;">
+                                    <option value="Temel Seviye" selected>Temel Seviye (İlk Adım)</option>
+                                    <option value="Orta Seviye">Orta Seviye (ÖSYM Ayarı)</option>
+                                    <option value="İleri Seviye">İleri Seviye (Derece)</option>
+                                </select>
+                            </div>
+                            <div style="display:flex; gap:6px; margin-bottom:8px;">
+                                <button class="btn" style="flex:1; justify-content:center;" onclick="renderCuratedBooks()">⚡ Garantili Kaynakları Göster</button>
+                                <button class="btn btn-indigo" style="flex:1; justify-content:center;" onclick="runLiveGeminiAI('books')">🧠 AI'dan Ekstra Analiz Al</button>
+                            </div>
+                            <div id="aiBooksOutput" style="max-height:240px; overflow-y:auto; padding-right:4px;"></div>
+                        </div>
+
+                        <div style="border-top:1px solid var(--border); padding-top:10px; flex:1; display:flex; flex-direction:column;">
+                            <div class="panel-title"><span>🎯 Soru Hedefleyici (Sadece Adetler)</span></div>
+                            <button class="btn btn-gold" style="width:100%; justify-content:center;" onclick="runLiveGeminiAI('question')">📊 Sıradaki Konuların Soru Hedeflerini Çıkar</button>
+                            <div class="coach-box" id="aiQuestionOutput" style="margin-top:8px; flex:1;">
+                                Konu çalışırken veya test çözerken hangi konudan toplam kaç soru eritmen gerektiğini burada net sayılarla görebilirsin.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 5. SEKME: GENİŞLETİLMİŞ YÖK ATLAS ÜNİVERSİTE & SİMÜLATÖR
+                 ========================================== -->
+            <section id="tab-atlas" class="tab-view">
+                <div class="panel-card">
+                    <div class="panel-title">
+                        <span>🏛️ Canlı YKS Sıralama Simülatörü & Genişletilmiş YÖK Atlas Veri Tabanı</span>
+                        <span id="atlasCountBadge" style="font-size:0.78rem; color:var(--teal);">85+ Fakülte & Program</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap:10px; align-items:end;">
+                        <div>
+                            <label style="font-size:0.74rem; color:var(--teal); font-weight:700;">TYT Netin (120):</label>
+                            <input type="number" id="simTytNet" value="92" min="0" max="120" oninput="runUniSimulator()" style="width:100%; margin-top:4px;">
+                        </div>
+                        <div>
+                            <label style="font-size:0.74rem; color:var(--indigo); font-weight:700;">AYT Sayısal Netin (80):</label>
+                            <input type="number" id="simAytNet" value="66" min="0" max="80" oninput="runUniSimulator()" style="width:100%; margin-top:4px;">
+                        </div>
+                        <div>
+                            <label style="font-size:0.74rem; color:var(--gold); font-weight:700;">Diploma Notun (OBP):</label>
+                            <input type="number" id="simObpInput" value="85" min="50" max="100" oninput="runUniSimulator()" style="width:100%; margin-top:4px;">
+                        </div>
+                        <div>
+                            <input type="text" id="uniSearchInput" placeholder="🔍 Üniversite veya Şehir Ara..." oninput="renderUniTable()" style="width:100%;">
+                        </div>
+                        <div>
+                            <select id="uniDeptFilter" onchange="renderUniTable()" style="width:100%;">
+                                <option value="ALL">Tüm Bölümler (Tıp + Müh + Diş + Ecz)</option>
+                                <option value="Tıp Fakültesi" selected>🩺 Tıp Fakülteleri</option>
+                                <option value="Bilgisayar">💻 Bilgisayar & Yazılım & Yapay Zeka Müh.</option>
+                                <option value="Mühendislik">⚙️ Tüm Mühendislikler (EE / Makine / Havacılık)</option>
+                                <option value="Diş Hekimliği">🦷 Diş Hekimliği</option>
+                                <option value="Eczacılık">💊 Eczacılık</option>
+                            </select>
+                        </div>
+                        <div style="background:var(--bg-card); padding:8px 12px; border-radius:8px; border:1px solid var(--teal);">
+                            <span style="font-size:0.7rem; color:var(--text-muted); display:block;">Tahmini Puan & Sıralama:</span>
+                            <strong id="simResultText" style="color:var(--gold); font-size:0.95rem;">Hesaplanıyor...</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-card" style="flex:1; overflow-y:auto;">
+                    <table class="data-table">
+                        <thead><tr><th>Üniversite</th><th>Şehir / Tür</th><th>Bölüm / Program</th><th>Taban Puan</th><th>Başarı Sırası</th><th>Hedef Menzili</th></tr></thead>
+                        <tbody id="uniTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 6. SEKME: HAP NOTLAR, MOTİVASYON & KİTAP
+                 ========================================== -->
+            <section id="tab-notes" class="tab-view">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; height:100%;">
+                    <div class="panel-card" style="display:flex; flex-direction:column;">
+                        <div class="panel-title"><span>🧠 Canlı Sayısal & Geometri Hap Not İstasyonu</span></div>
+                        <div style="display:flex; gap:8px; margin-bottom:10px;">
+                            <select id="stationExamType" onchange="updateStationLessons()"><option value="TYT">TYT</option><option value="AYT">AYT</option></select>
+                            <select id="stationLessonSelect" onchange="updateStationTopics()" style="flex:1;"></select>
+                            <select id="stationTopicSelect" style="flex:1;"></select>
+                        </div>
+                        <div style="display:flex; gap:6px; margin-bottom:10px;">
+                            <button class="btn" onclick="runLiveGeminiAI('station_notes')">📝 Kritik Formüller & Hap Not</button>
+                            <button class="btn btn-indigo" onclick="runLiveGeminiAI('station_tactics')">🎯 ÖSYM Soru Taktiği</button>
+                        </div>
+                        <div class="coach-box" id="aiStationOutput" style="flex:1; max-height:100%;">
+                            Seçtiğin konunun ÖSYM şifreleri ve özet formülleri burada maddeler halinde belirecek...
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="display:flex; flex-direction:column;">
+                        <div class="panel-title"><span>🔥 Koç Motivasyonu & Epik Kitap Kulübü</span></div>
+                        <div style="display:flex; gap:6px; margin-bottom:10px;">
+                            <button class="btn btn-gold" onclick="runLiveGeminiAI('motivation')">🔥 Sert Motivasyon Konuşması</button>
+                            <button class="btn btn-indigo" onclick="runLiveGeminiAI('weekly_novel')">📖 1 Epik Fantastik Kitap Öner</button>
+                            <button class="btn btn-ghost" onclick="runLiveGeminiAI('culture')">🌐 Bilim & Tıp Kültürü</button>
+                        </div>
+                        <div class="coach-box" id="aiCultureOutput" style="flex:1; max-height:100%;">
+                            Yorulduğunda veya odağın dağıldığında buradan koç konuşması veya zihin açıcı kitap/kültür tavsiyesi alabilirsin kral...
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+<script>
+    /* 🚀 SAYISAL & GEOMETRİ MÜFREDAT VERİTABANI */
+    const tytMüfredat = {
+        "TYT Matematik": ["Temel Kavramlar", "Sayı Basamakları", "Bölme ve Bölünebilme", "EBOB-EKOK", "Rasyonel Sayılar", "Birinci Dereceden Denklemler", "Basit Eşitsizlikler", "Mutlak Değer", "Köklü İfadeler", "Çarpanlara Ayırma", "Oran-Orantı", "Problemler", "Kümeler", "Fonksiyonlar", "Permütasyon-Kombinasyon", "Binom ve Olasılık", "İstatistik"],
+        "TYT Geometri": ["Doğruda ve Üçgende Açılar", "Özel Üçgenler", "Dik ve İkizkenar Üçgen", "Üçgende Alan ve Benzerlik", "Açıortay ve Kenarortay", "Çokgenler", "Dörtgenler ve Yamuk", "Paralelkenar ve Eşkenar Dörtgen", "Dikdörtgen, Kare ve Deltoid", "Çember ve Daire", "Katı Cisimler", "Doğrunun Analitik İncelenmesi"],
+        "TYT Türkçe": ["Sözcükte Anlam", "Cümlede Anlam", "Paragrafta Anlam", "Ses Bilgisi", "Yazım Kuralları", "Noktalama İşaretleri", "Sözcükte Yapı", "Sözcük Türleri", "Edat-Bağlaç-Ünlem", "Fiiller ve Fiilimsiler", "Cümlenin Ögeleri", "Anlatım Bozuklukları"],
+        "TYT Fizik": ["Fizik Bilimine Giriş", "Madde ve Özellikleri", "Hareket ve Kuvvet", "İş, Güç ve Enerji", "Isı, Sıcaklık ve Genleşme", "Elektrostatik", "Elektrik ve Manyetizma", "Basınç ve Kaldırma Kuvveti", "Dalgalar", "Optik"],
+        "TYT Kimya": ["Kimya Bilimi", "Atom ve Periyodik Sistem", "Kimyasal Türler Arası Etkileşimler", "Maddenin Halleri", "Doğa ve Kimya", "Kimyanın Temel Kanunları", "Mol Kavramı", "Kimyasal Hesaplamalar", "Karışımlar", "Asitler, Bazlar ve Tuzlar"],
+        "TYT Biyoloji": ["Canlıların Ortak Özellikleri", "Canlıların Temel Bileşenleri", "Hücre ve Yapısı", "Canlıların Sınıflandırılması", "Hücre Bölünmeleri", "Kalıtım Kuralları", "Ekosistem Ekolojisi"]
+    };
+
+    const aytMüfredat = {
+        "AYT Matematik": ["İkinci Dereceden Denklemler", "Karmaşık Sayılar", "Eşitsizlikler", "Parabol", "Trigonometri", "Logaritma", "Diziler", "Limit ve Süreklilik", "Türev", "İntegral"],
+        "AYT Geometri": ["Noktanın ve Doğrunun Analitiği", "Çemberin Analitiği", "Dönüşüm Geometrisi", "Katı Cisimler (İleri Düzey)"],
+        "AYT Fizik": ["Vektörler ve Bağıl Hareket", "Newton’ın Hareket Yasaları", "Sabit İvmeli Hareket", "Atışlar", "Enerji ve İtme-Momentum", "Tork ve Denge", "Basit Makineler", "Elektriksel Kuvvet ve Alan", "Sığaçlar ve İndüksiyon", "Düzgün Çembersel Hareket", "Basit Harmonik Hareket", "Dalga Mekaniği", "Modern Fizik"],
+        "AYT Kimya": ["Modern Atom Teorisi", "Gazlar", "Sıvı Çözeltiler", "Kimyasal Tepkemelerde Enerji", "Kimyasal Tepkimelerde Hız", "Kimyasal Denge", "Kimya ve Elektrik", "Karbon Kimyasına Giriş", "Organik Bileşikler"],
+        "AYT Biyoloji": ["İnsan Fizyolojisi (Tüm Sistemler)", "Komünite ve Popülasyon Ekolojisi", "Genden Proteine", "Canlılarda Enerji Dönüşümleri", "Bitki Biyolojisi"]
+    };
+
+    const birlesikMüfredat = {...tytMüfredat, ...aytMüfredat};
+    const gunlerList = ["pazartesi", "sali", "carsamba", "persembe", "cuma", "cumartesi", "pazar"];
+
+    /* 📖 DÜZGÜN KARTLI GARANTİLİ KAYNAK KİTAP VERİTABANI */
+    const curatedBooksDB = {
+        "TYT Matematik": {
+            "Temel Seviye": [
+                { name: "Bıyıklı Matematik 10 Günde Temel Atma & Kamp Kitabı", desc: "İşlem yeteneğini ve temel kavram kurallarını sıfırdan, hiç sıkmadan oturtur.", target: "Temeli zayıf olanlar ve yeni başlayanlar için 1 numara." },
+                { name: "Aktif Matematik (0'dan Başlayanlara)", desc: "Adım adım çözümlü örneklerle en temel işlem ve denklem pratiği kazandırır.", target: "Klasik sorularda hız kazanmak isteyenler." },
+                { name: "345 Yayınları TYT Matematik Soru Bankası (İlk Testler)", desc: "Klasikleşmiş sorularla konuyu kavratıp ÖSYM tadında sorulara yumuşak geçiş yaptırır.", target: "Temelden orta seviyeye köprü kurmak isteyenler." }
+            ],
+            "Orta Seviye": [
+                { name: "345 Yayınları TYT Matematik Soru Bankası", desc: "ÖSYM sınav formatına en yakın, kademeli zorlaşan Türkiye'nin en popüler kaynağı.", target: "Netlerini 15-25 bandına taşımak isteyenler." },
+                { name: "Bilgi Sarmal TYT Matematik Soru Bankası", desc: "Tamamı yeni nesil, hikaye kurgusu güçlü ve sınav provası niteliğinde testler.", target: "Yeni nesil sorularda süre sıkıntısı yaşayanlar." },
+                { name: "3D Yayınları TYT Matematik Soru Bankası", desc: "ÖSYM'nin seçici sorularına hazırlayan, sağlam muhakeme isteyen sorular.", target: "Orta-Üst seviyeye geçiş yapmak isteyenler." }
+            ],
+            "İleri Seviye": [
+                { name: "Orijinal Yayınları TYT Matematik Soru Bankası (Pembe/Mavi Testler)", desc: "Sınırları zorlayan, derece öğrencilerinin hız ve bakış açısı kazandığı zirve kaynak.", target: "Hedefi 35+ net ve İlk 20.000 olanlar." },
+                { name: "Apotemi Problemler Fasikülü", desc: "TYT'nin kalbi olan problemleri en üst düzey senaryolarla parçalayan fasikül.", target: "Problemlerde soru kaçırmak istemeyenler." },
+                { name: "Barış Yayınları TYT Matematik Soru Bankası", desc: "Özgün, ters köşe ve üst düzey yorum gücü gerektiren seçici sorular.", target: "Fark yaratmak isteyen derece adayları." }
+            ]
+        },
+        "TYT Geometri": {
+            "Temel Seviye": [
+                { name: "Kenan Kara İle Geometri Video Ders Kitabı + Soru Bankası", desc: "Geometri görme yeteneğini sıfırdan, ispatlarıyla ve temel özelliklerle inşa eder.", target: "Geometriden korkanlar ve ilk kez başlayanlar." },
+                { name: "Acil Yayınları Geometrinin İlacı", desc: "Yeni nesile geçiş öncesi temel ve orta-kolay düzeyde özgüven kazandıran kaynak.", target: "0-4 net bandından hızla çıkmak isteyenler." }
+            ],
+            "Orta Seviye": [
+                { name: "345 Yayınları TYT-AYT Geometri Soru Bankası", desc: "Görsel kurgusu ve ÖSYM benzerliği çok yüksek, kademeli gelişim kaynağı.", target: "Orta seviye sağlam pratik arayanlar." },
+                { name: "Bilgi Sarmal TYT-AYT Geometri Soru Bankası", desc: "Katlama, kesme ve döndürme sorularında sınav ayarında harika kurgular.", target: "Yeni nesil geometride hızlanmak isteyenler." }
+            ],
+            "İleri Seviye": [
+                { name: "Orijinal Yayınları TYT-AYT Geometri Soru Bankası", desc: "Mavi ve pembe testleriyle görmesi en zor soruları barındıran derece kaynağı.", target: "Geometriyi fullemek isteyenler." },
+                { name: "3D Yayınları TYT Geometri Soru Bankası", desc: "ÖSYM'nin en seçici geometri sorularına birebir hazırlayan üst düzey testler.", target: "İlk 20K hedefli sayısalcılar." }
+            ]
+        },
+        "TYT Türkçe": {
+            "Temel Seviye": [
+                { name: "Hız ve Renk Yayınları Paragraf Hız Soruları", desc: "Mavi-Kırmızı-Turuncu hız kademeleriyle okuma ve anlama kondisyonunu sıfırdan kurar.", target: "Paragrafta odaklanma sorunu yaşayanlar." },
+                { name: "345 Yayınları Sıfır Risk Paragraf", desc: "Her soru tipini ayrı ayrı öğreten ve en çok tercih edilen temel-orta paragraf kaynağı.", target: "Paragraf netlerini sabitlemek isteyenler." }
+            ],
+            "Orta Seviye": [
+                { name: "Bilgi Sarmal TYT Türkçe & Dil Bilgisi Soru Bankası", desc: "Ses, yazım, noktalama ve dil bilgisinde ÖSYM tuzaklarını birebir öğreten kaynak.", target: "30+ Türkçe netine ulaşmak isteyenler." },
+                { name: "3D Yayınları Dil Bilgisi Soru Bankası", desc: "Seçici dil bilgisi örnekleriyle tüm kuralları eksiksiz tarar.", target: "Dil bilgisinden soru kaçırmak istemeyenler." }
+            ],
+            "İleri Seviye": [
+                { name: "Apotemi Paragraf & Limit Kronometre Paragraf", desc: "Yoğun felsefi ve bilimsel metinlerle en zorlu ÖSYM paragraflarına hazırlar.", target: "35+ net ve süre yönetimi hedefleyenler." }
+            ]
+        },
+        "TYT Fizik": {
+            "Temel Seviye": [
+                { name: "Altuğ Güneş TYT Fizik Kamp Kitabı + Soru Bankası", desc: "Formüle boğmadan, günlük hayat örnekleri ve kavram yanılgılarıyla fiziği sevdirir.", target: "Fizikte temel mantığı kurmak isteyenler." },
+                { name: "Okyanus 40 Seans TYT Fizik", desc: "Temel kavramları adım adım öğreten başlangıç kaynağı.", target: "Sıfırdan başlayanlar." }
+            ],
+            "Orta Seviye": [
+                { name: "345 Yayınları TYT Fizik Soru Bankası", desc: "ÖSYM'nin öncüllü ve yorum ağırlıklı fizik sorularına en uygun kaynak.", target: "5-6 net bandına çıkmak isteyenler." },
+                { name: "Bilgi Sarmal TYT Fizik Soru Bankası", desc: "Deneysel ve günlük hayat kurgulu tam sınav ayarında sorular.", target: "Kavram bilgisini test etmek isteyenler." }
+            ],
+            "İleri Seviye": [
+                { name: "3D Yayınları TYT Fizik Soru Bankası", desc: "Ters köşe öncüller ve derin fizik muhakemesi isteyen seçici testler.", target: "7'de 7 hedefleyen derece adayları." }
+            ]
+        },
+        "TYT Kimya": {
+            "Temel Seviye": [
+                { name: "Görkem Şahin (Benim Hocam) TYT Kimya Ders Notları & Soru Bankası", desc: "Kimyayı en anlaşılır, sıfırdan ve akılda kalıcı kodlamalarla öğreten başlangıç seti.", target: "Kimyaya sıfırdan başlayanlar." },
+                { name: "Miray Yayınları TYT Kimya Soru Bankası", desc: "Hücrelendirilmiş yapısıyla konuyu adım adım öğreten temel-orta kaynak.", target: "Konu sonrası ilk test kitabı arayanlar." }
+            ],
+            "Orta Seviye": [
+                { name: "Orbital Yayınları TYT Kimya Soru Bankası", desc: "YKS kimyasında Türkiye'nin en çok çözülen, ÖSYM ile birebir uyumlu kaynağı.", target: "Kimyayı eksiksiz bitirmek isteyen herkes." },
+                { name: "Palme Yayınları TYT Kimya Soru Bankası", desc: "Klasik ve yeni nesil dengesi çok sağlam orta seviye kaynak.", target: "Netlerini garantilemek isteyenler." }
+            ],
+            "İleri Seviye": [
+                { name: "Aydın Yayınları TYT Kimya Soru Bankası", desc: "En ince detayları bile tarayan, kimyada soru kaçırtmayan üst düzey kaynak.", target: "7'de 7 net hedefleyenler." }
+            ]
+        },
+        "TYT Biyoloji": {
+            "Temel Seviye": [
+                { name: "Biosem (Barış Hoca) TYT Biyoloji Kamp Kitabı & Biyotik İlk Adım", desc: "Görsel hafıza ve kodlamalarla biyoloji ezberini mantığa oturtan temel kaynak.", target: "Biyolojiyi çabuk unutanlar ve yeni başlayanlar." }
+            ],
+            "Orta Seviye": [
+                { name: "Biyotik Yayınları TYT Biyoloji Soru Bankası", desc: "Biyolojinin başucu kitabı; ÖSYM diliyle birebir örtüşen net sorular.", target: "Tüm sayısal öğrencileri için zorunlu kaynak." },
+                { name: "Palme Yayınları TYT Biyoloji Soru Bankası", desc: "Zengin grafik ve tablo yorumlama soruları.", target: "Orta-Üst gelişim." }
+            ],
+            "İleri Seviye": [
+                { name: "3D Yayınları & Apotemi TYT Biyoloji", desc: "Çeldiricisi güçlü öncüllü sorularla MEB kitabının en ince detaylarını tarar.", target: "Biyolojiyi fullemek isteyenler." }
+            ]
+        },
+        "AYT Matematik": {
+            "Temel Seviye": [
+                { name: "Bıyıklı Matematik AYT Kamp Kitabı & Acil Matematiğin İlacı AYT", desc: "Polinom, Parabol, Trigonometri ve LTİ konularının temel kurallarını sıfırdan kavratır.", target: "AYT konularına ilk adımını atanlar." }
+            ],
+            "Orta Seviye": [
+                { name: "345 Yayınları AYT Matematik Soru Bankası", desc: "Klasikleşmiş sorulardan ÖSYM ikizlerine doğru uzanan en dengeli AYT kaynağı.", target: "AYT netlerini 20-30 bandına çekmek isteyenler." },
+                { name: "Bilgi Sarmal AYT Matematik Soru Bankası", desc: "Tam sınav ayarında, işlem ve yorum dengesi kusursuz testler.", target: "Sağlam AYT pratiği." }
+            ],
+            "İleri Seviye": [
+                { name: "Orijinal Yayınları AYT Matematik & Apotemi Fasikülleri (Türev-İntegral-Trigo)", desc: "Tıp ve İTÜ Mühendislik kazandıran, çoklu kazanım içeren zirve kaynaklar.", target: "İlk 20.000 ve 35+ AYT Matematik hedefleyenler." },
+                { name: "3D Yayınları & Barış Yayınları AYT Matematik", desc: "ÖSYM'nin en zorlayıcı sorularına antrenman yaptıran derece kitapları.", target: "Derece adayları." }
+            ]
+        },
+        "AYT Geometri": {
+            "Temel Seviye": [
+                { name: "Kenan Kara AYT Geometri Kamp Kitabı", desc: "Analitik Geometri ve Çemberin Analitiğini sıfırdan ispatlarıyla öğretir.", target: "AYT Geometriye yeni başlayanlar." }
+            ],
+            "Orta Seviye": [
+                { name: "345 & Bilgi Sarmal TYT-AYT Geometri", desc: "Analitik ve dönüşüm geometrisinde tam ÖSYM ayarında kurgular.", target: "Netlerini garantiye almak isteyenler." }
+            ],
+            "İleri Seviye": [
+                { name: "Apotemi Analitik Geometri Fasikülü & Orijinal Geometri", desc: "Analitik düzlemde en seçici soruları çözmek isteyenler için başucu seti.", target: "Full AYT Geometri hedefleyenler." }
+            ]
+        },
+        "AYT Fizik": {
+            "Temel Seviye": [
+                { name: "Özcan Aykın AYT Fizik Video Ders Notları & Okyanus 40 Seans AYT", desc: "Simülasyonlarla ve ispatlarla AYT fiziğin (Mekanik, Elektrik, Modern) mantığını kurar.", target: "AYT Fiziği ezberlemeden öğrenmek isteyenler." }
+            ],
+            "Orta Seviye": [
+                { name: "345 Yayınları AYT Fizik Soru Bankası", desc: "Günlük hayat bağlantılı ve ÖSYM tarzı yorum/işlem dengeli soru bankası.", target: "Netlerini 10+ bandına taşımak isteyenler." },
+                { name: "Bilgi Sarmal AYT Fizik Soru Bankası", desc: "Kazanım odaklı, kaliteli orta-üst sorular.", target: "Konu pekiştirme." }
+            ],
+            "İleri Seviye": [
+                { name: "3D Yayınları & Aydın Yayınları AYT Fizik Soru Bankası", desc: "Mekanik ve Elektromanyetizmada sınırları zorlayan, tam derece belirleyici kaynaklar.", target: "14'te 14 AYT Fizik hedefleyenler." }
+            ]
+        },
+        "AYT Kimya": {
+            "Temel Seviye": [
+                { name: "Görkem Şahin AYT Kimya & Miray AYT Kimya Soru Bankası", desc: "Gazlar, Sıvı Çözeltiler, Denge ve Organik Kimyayı hücreleme yöntemiyle sıfırdan öğretir.", target: "AYT Kimyada işlem pratiği kazanmak isteyenler." }
+            ],
+            "Orta Seviye": [
+                { name: "Orbital Yayınları AYT Kimya Soru Bankası", desc: "MEB kazanımlarına %100 sadık, ÖSYM tarzı soruların merkezi.", target: "10+ net hedefleyen tüm sayısalcılar." }
+            ],
+            "İleri Seviye": [
+                { name: "Aydın Yayınları AYT Kimya & Organik Kimya Fasikülü", desc: "AYT Kimyada en seçici işlem ve yorum sorularını barındıran efsane kaynak.", target: "13'te 13 AYT Kimya hedefleyenler." }
+            ]
+        },
+        "AYT Biyoloji": {
+            "Temel Seviye": [
+                { name: "Dr. Biyoloji AYT Kamp Kitabı & Biyotik İlk Adım", desc: "İnsan Fizyolojisi (Sistemler) ve Bitki Biyolojisini klinik ve net şemalarla özetler.", target: "Sistemleri mantığıyla kavramak isteyenler." }
+            ],
+            "Orta Seviye": [
+                { name: "Biyotik Yayınları AYT Biyoloji Soru Bankası", desc: "ÖSYM'nin biyoloji soru diline en yakın, her sayısalcının çözmesi gereken kaynak.", target: "Sağlam konu taraması." }
+            ],
+            "İleri Seviye": [
+                { name: "Apotemi Sistemler Fasikülü & 3D AYT Biyoloji", desc: "MEB Anadolu Lisesi kitabındaki tüm ince detayları sorgulatan ileri seviye set.", target: "13'te 13 AYT Biyoloji hedefleyenler." }
+            ]
+        }
+    };
+
+    /* 🏛️ GENİŞLETİLMİŞ YÖK ATLAS ÜNİVERSİTE VE BÖLÜM VERİTABANI (85+ PROGRAM) */
+    const yokAtlasData = [
+        // TIP FAKÜLTELERİ (DEVLET & VAKIF BURSLU)
+        { uni: "Koç Üniversitesi", city: "İstanbul (Vakıf %100 Burslu)", dept: "Tıp Fakültesi (İngilizce)", score: 551.10, rank: 45 },
+        { uni: "İstanbul Medipol Üniversitesi", city: "İstanbul (Vakıf %100 Burslu)", dept: "Tıp Fakültesi (Uluslararası)", score: 548.20, rank: 110 },
+        { uni: "Acıbadem Üniversitesi", city: "İstanbul (Vakıf %100 Burslu)", dept: "Tıp Fakültesi (İngilizce)", score: 541.50, rank: 490 },
+        { uni: "Hacettepe Üniversitesi", city: "Ankara (Devlet)", dept: "Tıp Fakültesi (İngilizce)", score: 536.80, rank: 1020 },
+        { uni: "Hacettepe Üniversitesi", city: "Ankara (Devlet)", dept: "Tıp Fakültesi (Türkçe)", score: 530.59, rank: 1836 },
+        { uni: "İstanbul Üniversitesi-Cerrahpaşa", city: "İstanbul (Devlet)", dept: "Tıp Fakültesi (İngilizce)", score: 532.40, rank: 1510 },
+        { uni: "İstanbul Üniversitesi-Cerrahpaşa", city: "İstanbul (Devlet)", dept: "Tıp Fakültesi (Türkçe)", score: 527.40, rank: 2350 },
+        { uni: "Ankara Üniversitesi", city: "Ankara (Devlet)", dept: "Tıp Fakültesi (İngilizce)", score: 525.10, rank: 2790 },
+        { uni: "Ankara Üniversitesi", city: "Ankara (Devlet)", dept: "Tıp Fakültesi (Türkçe)", score: 522.15, rank: 3420 },
+        { uni: "İstanbul Üniversitesi (Çapa)", city: "İstanbul (Devlet)", dept: "Tıp Fakültesi (Türkçe)", score: 520.80, rank: 3750 },
+        { uni: "Ege Üniversitesi", city: "İzmir (Devlet)", dept: "Tıp Fakültesi", score: 518.40, rank: 4380 },
+        { uni: "Gazi Üniversitesi", city: "Ankara (Devlet)", dept: "Tıp Fakültesi", score: 515.90, rank: 5120 },
+        { uni: "Marmara Üniversitesi", city: "İstanbul (Devlet)", dept: "Tıp Fakültesi (İngilizce)", score: 514.20, rank: 5640 },
+        { uni: "Dokuz Eylül Üniversitesi", city: "İzmir (Devlet)", dept: "Tıp Fakültesi", score: 511.20, rank: 6650 },
+        { uni: "Ankara Yıldırım Beyazıt Üni.", city: "Ankara (Devlet)", dept: "Tıp Fakültesi", score: 509.40, rank: 7280 },
+        { uni: "Sağlık Bilimleri Üni. (Gülhane)", city: "Ankara (Devlet)", dept: "Tıp Fakültesi", score: 508.85, rank: 7540 },
+        { uni: "Akdeniz Üniversitesi", city: "Antalya (Devlet)", dept: "Tıp Fakültesi", score: 507.60, rank: 7981 },
+        { uni: "Sağlık Bilimleri Üni. (Hamidiye)", city: "İstanbul (Devlet)", dept: "Tıp Fakültesi", score: 505.80, rank: 8650 },
+        { uni: "Bursa Uludağ Üniversitesi", city: "Bursa (Devlet)", dept: "Tıp Fakültesi", score: 504.10, rank: 9320 },
+        { uni: "İzmir Katip Çelebi Üniversitesi", city: "İzmir (Devlet)", dept: "Tıp Fakültesi", score: 502.30, rank: 10120 },
+        { uni: "Eskişehir Osmangazi Üniversitesi", city: "Eskişehir (Devlet)", dept: "Tıp Fakültesi", score: 501.40, rank: 10540 },
+        { uni: "Çukurova Üniversitesi", city: "Adana (Devlet)", dept: "Tıp Fakültesi", score: 499.80, rank: 11250 },
+        { uni: "Kocaeli Üniversitesi", city: "Kocaeli (Devlet)", dept: "Tıp Fakültesi", score: 498.60, rank: 11780 },
+        { uni: "Ondokuz Mayıs Üniversitesi", city: "Samsun (Devlet)", dept: "Tıp Fakültesi", score: 497.50, rank: 12300 },
+        { uni: "Erciyes Üniversitesi", city: "Kayseri (Devlet)", dept: "Tıp Fakültesi", score: 496.20, rank: 12890 },
+        { uni: "Pamukkale Üniversitesi", city: "Denizli (Devlet)", dept: "Tıp Fakültesi", score: 495.19, rank: 13350 },
+        { uni: "Mersin Üniversitesi", city: "Mersin (Devlet)", dept: "Tıp Fakültesi", score: 494.10, rank: 13900 },
+        { uni: "Selçuk Üniversitesi", city: "Konya (Devlet)", dept: "Tıp Fakültesi", score: 492.80, rank: 14650 },
+        { uni: "Karadeniz Teknik Üniversitesi", city: "Trabzon (Devlet)", dept: "Tıp Fakültesi", score: 491.50, rank: 15240 },
+        { uni: "Çanakkale Onsekiz Mart Üni.", city: "Çanakkale (Devlet)", dept: "Tıp Fakültesi", score: 490.40, rank: 15800 },
+        { uni: "Trakya Üniversitesi", city: "Edirne (Devlet)", dept: "Tıp Fakültesi", score: 489.60, rank: 16290 },
+        { uni: "Sakarya Üniversitesi", city: "Sakarya (Devlet)", dept: "Tıp Fakültesi", score: 488.90, rank: 16750 },
+        { uni: "Muğla Sıtkı Koçman Üniversitesi", city: "Muğla (Devlet)", dept: "Tıp Fakültesi", score: 488.10, rank: 17200 },
+        { uni: "Manisa Celal Bayar Üniversitesi", city: "Manisa (Devlet)", dept: "Tıp Fakültesi", score: 487.40, rank: 17650 },
+        { uni: "İnönü Üniversitesi", city: "Malatya (Devlet)", dept: "Tıp Fakültesi", score: 486.70, rank: 18100 },
+        { uni: "Bolu Abant İzzet Baysal Üni.", city: "Bolu (Devlet)", dept: "Tıp Fakültesi", score: 486.00, rank: 18550 },
+        { uni: "Aydın Adnan Menderes Üni.", city: "Aydın (Devlet)", dept: "Tıp Fakültesi", score: 485.10, rank: 19200 },
+        { uni: "Necmettin Erbakan Üniversitesi", city: "Konya (Devlet)", dept: "Tıp Fakültesi", score: 484.20, rank: 19850 },
+        { uni: "Balıkesir Üniversitesi", city: "Balıkesir (Devlet)", dept: "Tıp Fakültesi", score: 483.40, rank: 20380 },
+        { uni: "Gaziantep Üniversitesi", city: "Gaziantep (Devlet)", dept: "Tıp Fakültesi", score: 482.60, rank: 20900 },
+        { uni: "Süleyman Demirel Üniversitesi", city: "Isparta (Devlet)", dept: "Tıp Fakültesi", score: 481.30, rank: 21800 },
+        { uni: "Tekirdağ Namık Kemal Üni.", city: "Tekirdağ (Devlet)", dept: "Tıp Fakültesi", score: 480.40, rank: 22450 },
+        { uni: "Düzce Üniversitesi", city: "Düzce (Devlet)", dept: "Tıp Fakültesi", score: 479.50, rank: 23100 },
+        { uni: "Hatay Mustafa Kemal Üni.", city: "Hatay (Devlet)", dept: "Tıp Fakültesi", score: 478.50, rank: 23900 },
+        { uni: "Afyonkarahisar Sağlık Bilimleri", city: "Afyon (Devlet)", dept: "Tıp Fakültesi", score: 477.60, rank: 24550 },
+        { uni: "Kahramanmaraş Sütçü İmam Üni.", city: "K.Maraş (Devlet)", dept: "Tıp Fakültesi", score: 476.80, rank: 25200 },
+        { uni: "Kırıkkale Üniversitesi", city: "Kırıkkale (Devlet)", dept: "Tıp Fakültesi", score: 475.90, rank: 25900 },
+        { uni: "Fırat Üniversitesi", city: "Elazığ (Devlet)", dept: "Tıp Fakültesi", score: 475.10, rank: 26600 },
+        { uni: "Sivas Cumhuriyet Üniversitesi", city: "Sivas (Devlet)", dept: "Tıp Fakültesi", score: 474.20, rank: 27250 },
+        { uni: "Atatürk Üniversitesi", city: "Erzurum (Devlet)", dept: "Tıp Fakültesi", score: 473.40, rank: 27900 },
+        { uni: "Dicle Üniversitesi", city: "Diyarbakır (Devlet)", dept: "Tıp Fakültesi", score: 471.90, rank: 29100 },
+        { uni: "Zonguldak Bülent Ecevit Üni.", city: "Zonguldak (Devlet)", dept: "Tıp Fakültesi", score: 470.80, rank: 30100 },
+        { uni: "Niğde Ömer Halisdemir Üni.", city: "Niğde (Devlet)", dept: "Tıp Fakültesi", score: 469.50, rank: 31200 },
+        { uni: "Tokat Gaziosmanpaşa Üni.", city: "Tokat (Devlet)", dept: "Tıp Fakültesi", score: 468.20, rank: 32300 },
+        { uni: "Recep Tayyip Erdoğan Üni.", city: "Rize (Devlet)", dept: "Tıp Fakültesi", score: 466.80, rank: 33500 },
+        { uni: "Harran Üniversitesi", city: "Şanlıurfa (Devlet)", dept: "Tıp Fakültesi", score: 465.40, rank: 34800 },
+        { uni: "Van Yüzüncü Yıl Üniversitesi", city: "Van (Devlet)", dept: "Tıp Fakültesi", score: 463.90, rank: 36100 },
+        { uni: "Adıyaman Üniversitesi", city: "Adıyaman (Devlet)", dept: "Tıp Fakültesi", score: 462.10, rank: 37500 },
+        { uni: "Erzincan Binali Yıldırım Üni.", city: "Erzincan (Devlet)", dept: "Tıp Fakültesi", score: 460.80, rank: 38700 },
+        { uni: "Kafkas Üniversitesi", city: "Kars (Devlet)", dept: "Tıp Fakültesi", score: 459.40, rank: 39903 },
+
+        // BİLGİSAYAR, YAZILIM, YAPAY ZEKA VE DİĞER MÜHENDİSLİKLER
+        { uni: "Boğaziçi Üniversitesi", city: "İstanbul (Devlet)", dept: "Bilgisayar Mühendisliği", score: 544.80, rank: 310 },
+        { uni: "Bilkent Üniversitesi", city: "Ankara (Vakıf %100 Burslu)", dept: "Bilgisayar Mühendisliği", score: 543.10, rank: 390 },
+        { uni: "ODTÜ", city: "Ankara (Devlet)", dept: "Bilgisayar Mühendisliği", score: 539.20, rank: 750 },
+        { uni: "İTÜ", city: "İstanbul (Devlet)", dept: "Bilgisayar Mühendisliği (İngilizce)", score: 534.50, rank: 1210 },
+        { uni: "İTÜ", city: "İstanbul (Devlet)", dept: "Yapay Zeka ve Veri Mühendisliği", score: 532.10, rank: 1520 },
+        { uni: "ODTÜ", city: "Ankara (Devlet)", dept: "Elektrik-Elektronik Mühendisliği", score: 531.00, rank: 1750 },
+        { uni: "İTÜ", city: "İstanbul (Devlet)", dept: "Uçak Mühendisliği (İngilizce)", score: 525.80, rank: 2610 },
+        { uni: "Hacettepe Üniversitesi", city: "Ankara (Devlet)", dept: "Bilgisayar Mühendisliği", score: 523.40, rank: 3120 },
+        { uni: "Hacettepe Üniversitesi", city: "Ankara (Devlet)", dept: "Yapay Zeka Mühendisliği", score: 518.90, rank: 4250 },
+        { uni: "Yıldız Teknik Üniversitesi", city: "İstanbul (Devlet)", dept: "Bilgisayar Mühendisliği", score: 515.20, rank: 5320 },
+        { uni: "İTÜ", city: "İstanbul (Devlet)", dept: "Elektronik ve Haberleşme Müh.", score: 513.80, rank: 5800 },
+        { uni: "Galatasaray Üniversitesi", city: "İstanbul (Devlet)", dept: "Bilgisayar Mühendisliği", score: 512.10, rank: 6350 },
+        { uni: "İTÜ", city: "İstanbul (Devlet)", dept: "Makine Mühendisliği", score: 505.40, rank: 8800 },
+        { uni: "Ege Üniversitesi", city: "İzmir (Devlet)", dept: "Bilgisayar Mühendisliği", score: 503.20, rank: 9750 },
+        { uni: "Gazi Üniversitesi", city: "Ankara (Devlet)", dept: "Bilgisayar Mühendisliği", score: 499.10, rank: 11500 },
+        { uni: "Marmara Üniversitesi", city: "İstanbul (Devlet)", dept: "Bilgisayar Mühendisliği", score: 497.00, rank: 12550 },
+        { uni: "Ankara Üniversitesi", city: "Ankara (Devlet)", dept: "Bilgisayar Mühendisliği", score: 494.50, rank: 13700 },
+        { uni: "Dokuz Eylül Üniversitesi", city: "İzmir (Devlet)", dept: "Bilgisayar Mühendisliği", score: 488.30, rank: 17100 },
+        { uni: "Akdeniz Üniversitesi", city: "Antalya (Devlet)", dept: "Bilgisayar Mühendisliği", score: 479.20, rank: 23300 },
+        { uni: "Çukurova Üniversitesi", city: "Adana (Devlet)", dept: "Bilgisayar Mühendisliği (İngilizce)", score: 471.50, rank: 29400 },
+
+        // DİŞ HEKİMLİĞİ & ECZACILIK
+        { uni: "Hacettepe Üniversitesi", city: "Ankara (Devlet)", dept: "Diş Hekimliği", score: 479.80, rank: 22800 },
+        { uni: "İstanbul Üniversitesi (Çapa)", city: "İstanbul (Devlet)", dept: "Diş Hekimliği", score: 477.40, rank: 24700 },
+        { uni: "Ankara Üniversitesi", city: "Ankara (Devlet)", dept: "Diş Hekimliği", score: 476.90, rank: 25100 },
+        { uni: "Ege Üniversitesi", city: "İzmir (Devlet)", dept: "Diş Hekimliği", score: 476.10, rank: 25800 },
+        { uni: "Gazi Üniversitesi", city: "Ankara (Devlet)", dept: "Diş Hekimliği", score: 474.50, rank: 27000 },
+        { uni: "Akdeniz Üniversitesi", city: "Antalya (Devlet)", dept: "Diş Hekimliği", score: 471.20, rank: 29600 },
+        { uni: "Çukurova Üniversitesi", city: "Adana (Devlet)", dept: "Diş Hekimliği", score: 468.90, rank: 31800 },
+        { uni: "Mersin Üniversitesi", city: "Mersin (Devlet)", dept: "Diş Hekimliği", score: 466.10, rank: 34200 },
+        { uni: "Hacettepe Üniversitesi", city: "Ankara (Devlet)", dept: "Eczacılık Fakültesi", score: 462.50, rank: 37100 },
+        { uni: "Ankara Üniversitesi", city: "Ankara (Devlet)", dept: "Eczacılık Fakültesi", score: 456.80, rank: 42500 },
+        { uni: "Ege Üniversitesi", city: "İzmir (Devlet)", dept: "Eczacılık Fakültesi", score: 454.10, rank: 45200 }
+    ];
+
+    /* 🌍 TYT DENEME TAKİBİ (SOSYAL DAHİL) & AYT */
+    const mockSubjectsConfig = {
+        "TYT": [
+            { id: "turkce", name: "TYT Türkçe", max: 40 },
+            { id: "sosyal", name: "TYT Sosyal", max: 20 },
+            { id: "mat", name: "TYT Matematik", max: 30 },
+            { id: "geo", name: "TYT Geometri", max: 10 },
+            { id: "fiz", name: "TYT Fizik", max: 7 },
+            { id: "kim", name: "TYT Kimya", max: 7 },
+            { id: "biy", name: "TYT Biyoloji", max: 6 }
+        ],
+        "AYT": [
+            { id: "mat", name: "AYT Matematik", max: 30 },
+            { id: "geo", name: "AYT Geometri", max: 10 },
+            { id: "fiz", name: "AYT Fizik", max: 14 },
+            { id: "kim", name: "AYT Kimya", max: 13 },
+            { id: "biy", name: "AYT Biyoloji", max: 13 }
+        ]
+    };
+
+    let timerMode = "stopwatch";
+    let tInterval = null, running = false;
+    let stopwatchSeconds = 0;
+    let countdownRemaining = 7200, countdownInitial = 7200;
+
+    window.onload = function() {
+        buildScheduleMatrixDOM();
+        loadSavedApiKey();
+        renderSeparateSubjects();
+        loadSavedTopicChecks();
+        calculateCurrentLevel();
+        populateBookLessons();
+        renderCuratedBooks();
+        updateStationLessons();
+        loadSavedSchedule();
+        updateScheduleStatsAndMissedPool();
+        setDefaultTargetDay();
+        setupTimerEvents();
+        loadWorkHoursDisplay();
+        renderMockSubjectInputs();
+        renderMockHistoryTable();
+        runUniSimulator();
+        loadSavedAIOutputs();
+    };
+
+    function switchTab(tabId, index) {
+        document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        document.querySelectorAll('.top-nav-btn').forEach((b, i) => b.classList.toggle('active', i === index));
+        document.querySelectorAll('.rail-icon').forEach((r, i) => r.classList.toggle('active', i === index));
+    }
+
+    /* 📅 HAFTALIK PROGRAM TABLOSU */
+    function buildScheduleMatrixDOM() {
+        const tbody = document.getElementById("scheduleMatrixBody");
+        tbody.innerHTML = "";
+        for (let b = 1; b <= 5; b++) {
+            let tr = document.createElement("tr");
+            tr.innerHTML = `<td class="time-col" id="row-time-b${b}">Blok ${b}</td>`;
+            gunlerList.forEach((gun, dayIdx) => {
+                let cellId = `cell-b${b}-${gun}`;
+                tr.innerHTML += `
+                    <td>
+                        <div class="slot-card" id="card-${cellId}">
+                            <div class="slot-top-bar">
+                                <span class="slot-badge b-konu" id="badge-${cellId}">BLOK ${b}</span>
+                                <div class="slot-actions">
+                                    <button class="act-btn ok" title="Çalıştım (Tamamlandı)" onclick="setSlotStatus('${cellId}', 'done')">✔</button>
+                                    <button class="act-btn fail" title="Çalışamadım (Telafiye Ekle)" onclick="setSlotStatus('${cellId}', 'missed')">✖</button>
+                                    <button class="act-btn cal" title="Bu Dersi Google Takvim'e Ekle" onclick="openSingleGoogleCal('${cellId}', ${dayIdx}, ${b})">📅</button>
+                                </div>
+                            </div>
+                            <div class="slot-text" contenteditable="true" id="${cellId}" oninput="onCellInput('${cellId}')"></div>
+                        </div>
+                    </td>
+                `;
+            });
+            tbody.appendChild(tr);
+        }
+    }
+
+    function detectBadgeForText(text) {
+        let lower = (text || "").toLowerCase();
+        if (lower.includes("deneme")) return { cls: "b-deneme", label: "DENEME" };
+        if (lower.includes("test") || lower.includes("soru")) return { cls: "b-test", label: "TEST ÇÖZÜMÜ" };
+        if (lower.includes("tekrar")) return { cls: "b-tekrar", label: "KONU TEKRARI" };
+        if (lower.trim().length > 0) return { cls: "b-konu", label: "KONU ÇALIŞMASI" };
+        return { cls: "b-konu", label: "BOŞ BLOK" };
+    }
+
+    function onCellInput(cellId) {
+        const el = document.getElementById(cellId);
+        const text = el.innerText.trim();
+        localStorage.setItem(`yks_v54_${cellId}`, text);
+        updateBadgeVisual(cellId, text);
+        updateScheduleStatsAndMissedPool();
+    }
+
+    function updateBadgeVisual(cellId, text) {
+        const badgeEl = document.getElementById(`badge-${cellId}`);
+        if (!badgeEl) return;
+        const info = detectBadgeForText(text);
+        badgeEl.className = `slot-badge ${info.cls}`;
+        badgeEl.innerText = info.label;
+    }
+
+    function setSlotStatus(cellId, status) {
+        const text = document.getElementById(cellId).innerText.trim();
+        if (!text) return alert("Kral önce bu hücrede bir ders olmalı!");
+        let currentStatus = localStorage.getItem(`yks_v54_status_${cellId}`) || "none";
+        let newStatus = (currentStatus === status) ? "none" : status;
+        localStorage.setItem(`yks_v54_status_${cellId}`, newStatus);
+        applySlotStatusVisual(cellId, newStatus);
+        updateScheduleStatsAndMissedPool();
+    }
+
+    function applySlotStatusVisual(cellId, status) {
+        const card = document.getElementById(`card-${cellId}`);
+        if (!card) return;
+        card.classList.remove("status-done", "status-missed");
+        if (status === "done") card.classList.add("status-done");
+        if (status === "missed") card.classList.add("status-missed");
+    }
+
+    function loadSavedSchedule() {
+        for (let b = 1; b <= 5; b++) {
+            gunlerList.forEach(gun => {
+                let cellId = `cell-b${b}-${gun}`;
+                let savedText = localStorage.getItem(`yks_v54_${cellId}`) || "";
+                let savedStatus = localStorage.getItem(`yks_v54_status_${cellId}`) || "none";
+                const el = document.getElementById(cellId);
+                if (el) el.innerText = savedText;
+                updateBadgeVisual(cellId, savedText);
+                applySlotStatusVisual(cellId, savedStatus);
+            });
+        }
+    }
+
+    function updateScheduleStatsAndMissedPool() {
+        let totalFilled = 0, doneCount = 0, missedList = [];
+        for (let b = 1; b <= 5; b++) {
+            gunlerList.forEach(gun => {
+                let cellId = `cell-b${b}-${gun}`;
+                let txt = (document.getElementById(cellId)?.innerText || "").trim();
+                let st = localStorage.getItem(`yks_v54_status_${cellId}`) || "none";
+                if (txt.length > 0) {
+                    totalFilled++;
+                    if (st === "done") doneCount++;
+                    if (st === "missed") missedList.push(txt);
+                }
+            });
+        }
+
+        document.getElementById("ringWeeklyStatus").innerText = `${doneCount}/${totalFilled}`;
+        document.getElementById("ringWeeklyText").innerText = `${doneCount} Ders Çalışıldı`;
+        document.getElementById("ringMissedText").innerText = `${missedList.length} Çalışılamadı (Telafi)`;
+        localStorage.setItem("yks_v54_missed_pool", JSON.stringify(missedList));
+    }
+
+    /* 📅 GOOGLE TAKVİM AKTARIMI */
+    function openSingleGoogleCal(cellId, dayOffset, blockNum) {
+        let rawText = document.getElementById(cellId)?.innerText.trim();
+        if (!rawText) return alert("Kral bu kutuda henüz ders yok!");
+        let baseHour = parseInt((document.getElementById("userStartHourInput").value || "08:30").split(":")[0]) || 8;
+        let startH = baseHour + (blockNum - 1) * 2;
+        let endH = startH + 2;
+
+        let now = new Date();
+        let currentDay = now.getDay();
+        let diffToMonday = (currentDay === 0 ? -6 : 1 - currentDay);
+        let targetDate = new Date(now);
+        targetDate.setDate(now.getDate() + diffToMonday + dayOffset);
+
+        const pad = n => n < 10 ? '0' + n : '' + n;
+        let y = targetDate.getFullYear(), m = pad(targetDate.getMonth() + 1), d = pad(targetDate.getDate());
+        let datesParam = `${y}${m}${d}T${pad(startH)}0000/${y}${m}${d}T${pad(endH)}0000`;
+
+        let url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("🩺 YKS: " + rawText)}&dates=${datesParam}&details=${encodeURIComponent("MedAcademy YKS Haftalık Ders Bloğu")}`;
+        window.open(url, '_blank');
+    }
+
+    function exportScheduleToICS() {
+        let icsLines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//MedAcademy YKS Savas Ussu V56//TR", "CALSCALE:GREGORIAN"];
+        let now = new Date();
+        let currentDay = now.getDay();
+        let diffToMonday = (currentDay === 0 ? -6 : 1 - currentDay);
+        const pad = n => n < 10 ? '0' + n : '' + n;
+        let baseHour = parseInt((document.getElementById("userStartHourInput").value || "08:30").split(":")[0]) || 8;
+        let eventCount = 0;
+
+        gunlerList.forEach((gun, dayOffset) => {
+            for (let b = 1; b <= 5; b++) {
+                let cellId = `cell-b${b}-${gun}`;
+                let text = (document.getElementById(cellId)?.innerText || "").trim();
+                if (!text) continue;
+
+                let startH = baseHour + (b - 1) * 2;
+                let endH = startH + 2;
+                let targetDate = new Date(now);
+                targetDate.setDate(now.getDate() + diffToMonday + dayOffset);
+                let y = targetDate.getFullYear(), m = pad(targetDate.getMonth() + 1), d = pad(targetDate.getDate());
+
+                icsLines.push("BEGIN:VEVENT");
+                icsLines.push(`DTSTART:${y}${m}${d}T${pad(startH)}0000`);
+                icsLines.push(`DTEND:${y}${m}${d}T${pad(endH)}0000`);
+                icsLines.push(`SUMMARY:🩺 YKS: ${text.replace(/\n/g, ' ')}`);
+                icsLines.push("DESCRIPTION:MedAcademy YKS Haftalık Program Seansı");
+                icsLines.push("BEGIN:VALARM");
+                icsLines.push("TRIGGER:-PT10M");
+                icsLines.push("ACTION:DISPLAY");
+                icsLines.push("DESCRIPTION:Ders Başlıyor Kral!");
+                icsLines.push("END:VALARM");
+                icsLines.push("END:VEVENT");
+                eventCount++;
+            }
+        });
+
+        if (eventCount === 0) return alert("Kral tabloda henüz takvime eklenecek dolu bir ders yok!");
+        icsLines.push("END:VCALENDAR");
+
+        let blob = new Blob([icsLines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "MedAcademy_YKS_Haftalik_Takvim.ics";
+        link.click();
+    }
+
+    /* ⏱️ DEV KRONOMETRE & GERİ SAYIM SİSTEMİ */
+    function setDefaultTargetDay() {
+        let todayIdx = new Date().getDay();
+        let dayKeys = ["pazar", "pazartesi", "sali", "carsamba", "persembe", "cuma", "cumartesi"];
+        let select = document.getElementById("timerTargetDaySelect");
+        if (select && dayKeys[todayIdx]) select.value = dayKeys[todayIdx];
+    }
+
+    function setTimerMode(mode) {
+        clearInterval(tInterval);
+        running = false;
+        timerMode = mode;
+        document.getElementById("modeBtnStopwatch").classList.toggle("active-mode", mode === "stopwatch");
+        document.getElementById("modeBtnCountdown").classList.toggle("active-mode", mode === "countdown");
+        document.getElementById("countdownSetupBar").style.display = (mode === "countdown") ? "flex" : "none";
+        document.getElementById("startBtn").style.display = "inline-flex";
+        document.getElementById("pauseBtn").style.display = "none";
+
+        if (mode === "stopwatch") {
+            stopwatchSeconds = 0;
+        } else {
+            let mins = parseInt(document.getElementById("manualMinutes").value) || 120;
+            countdownRemaining = mins * 60;
+            countdownInitial = countdownRemaining;
+        }
+        updateTimerUI();
+    }
+
+    function applyCountdownMinutes() {
+        let v = parseInt(document.getElementById("manualMinutes").value) || 120;
+        if (v > 0) {
+            clearInterval(tInterval); running = false;
+            countdownRemaining = v * 60;
+            countdownInitial = countdownRemaining;
+            document.getElementById("startBtn").style.display = "inline-flex";
+            document.getElementById("pauseBtn").style.display = "none";
+            updateTimerUI();
+        }
+    }
+
+    function setupTimerEvents() {
+        const startBtn = document.getElementById("startBtn"), pauseBtn = document.getElementById("pauseBtn"), disp = document.getElementById("timerDisplay");
+        
+        startBtn.onclick = () => {
+            if (running) return;
+            running = true;
+            startBtn.style.display = "none";
+            pauseBtn.style.display = "inline-flex";
+
+            tInterval = setInterval(() => {
+                if (timerMode === "stopwatch") {
+                    stopwatchSeconds++;
+                    updateTimerUI();
+                } else {
+                    if (countdownRemaining <= 0) {
+                        clearInterval(tInterval); running = false;
+                        disp.innerText = "SÜRE BİTTİ!";
+                        startBtn.style.display = "inline-flex"; pauseBtn.style.display = "none";
+                        return;
+                    }
+                    countdownRemaining--;
+                    updateTimerUI();
+                }
+            }, 1000);
+        };
+
+        pauseBtn.onclick = () => {
+            clearInterval(tInterval); running = false;
+            startBtn.style.display = "inline-flex"; pauseBtn.style.display = "none";
+        };
+
+        document.getElementById("resetBtn").onclick = () => {
+            clearInterval(tInterval); running = false;
+            if (timerMode === "stopwatch") stopwatchSeconds = 0;
+            else countdownRemaining = countdownInitial;
+            updateTimerUI();
+            startBtn.style.display = "inline-flex"; pauseBtn.style.display = "none";
+        };
+    }
+
+    function updateTimerUI() {
+        let sec = (timerMode === "stopwatch") ? stopwatchSeconds : countdownRemaining;
+        let h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+        const pad = n => n < 10 ? '0' + n : '' + n;
+        document.getElementById("timerDisplay").innerText = `${pad(h)}:${pad(m)}:${pad(s)}`;
+    }
+
+    function finishSessionAndLog() {
+        let elapsedSeconds = (timerMode === "stopwatch") ? stopwatchSeconds : (countdownInitial - countdownRemaining);
+        if (elapsedSeconds < 10) return alert("Kral kaydetmek için kronometreyi başlatıp en az 10 saniye çalışmış olmalısın!");
+
+        let elapsedMin = Math.max(1, Math.round(elapsedSeconds / 60));
+        clearInterval(tInterval); running = false;
+        if (timerMode === "stopwatch") stopwatchSeconds = 0;
+        else countdownRemaining = countdownInitial;
+        updateTimerUI();
+        document.getElementById("startBtn").style.display = "inline-flex";
+        document.getElementById("pauseBtn").style.display = "none";
+
+        let month = document.getElementById("statsMonthSelect").value || "Ekim";
+        let week = document.getElementById("statsWeekSelect").value || "1";
+        let day = document.getElementById("timerTargetDaySelect").value;
+        let storageKey = `yks_v55_work_${month}_w${week}`;
+
+        let data = JSON.parse(localStorage.getItem(storageKey)) || {};
+        data[day] = (data[day] || 0) + elapsedMin;
+        localStorage.setItem(storageKey, JSON.stringify(data));
+        loadWorkHoursDisplay();
+
+        let h = Math.floor(elapsedMin / 60), m = elapsedMin % 60;
+        let timeStr = h > 0 ? `${h} Saat ${m} Dakika` : `${m} Dakika`;
+        alert(`🏁 Harika çalışma kral! Çalıştığın ${timeStr}, ${day.toUpperCase()} gününe başarıyla kaydedildi!`);
+    }
+
+    function loadWorkHoursDisplay() {
+        let month = document.getElementById("statsMonthSelect")?.value || "Ekim";
+        let week = document.getElementById("statsWeekSelect")?.value || "1";
+        let storageKey = `yks_v55_work_${month}_w${week}`;
+        let data = JSON.parse(localStorage.getItem(storageKey)) || {};
+        let total = 0;
+
+        gunlerList.forEach(g => {
+            let m = data[g] || 0; total += m;
+            let el = document.getElementById(`wh-${g}`);
+            if (el) {
+                let hrs = Math.floor(m / 60), rem = m % 60;
+                el.innerText = hrs > 0 ? `${hrs}S ${rem}Dk` : `${m} Dk`;
+            }
+        });
+
+        let totH = Math.floor(total / 60), totM = total % 60;
+        document.getElementById("weeklyTotalHoursBadge").innerText = `Haftalık Toplam: ${totH} Saat ${totM} Dk`;
+        document.getElementById("ringTotalHours").innerText = `${totH}S`;
+        document.getElementById("ringTotalHoursText").innerText = `${totH} Saat ${totM} Dk`;
+    }
+
+    /* 📖 DÜZGÜN KARTLI KAYNAK ÖNERİCİ FONKSİYONU */
+    function populateBookLessons() {
+        const sel = document.getElementById("bookLessonSelect");
+        sel.innerHTML = "";
+        Object.keys(birlesikMüfredat).forEach(d => sel.innerHTML += `<option value="${d}">${d}</option>`);
+    }
+
+    function renderCuratedBooks() {
+        const lesson = document.getElementById("bookLessonSelect").value || "TYT Matematik";
+        const level = document.getElementById("levelSelect").value || "Temel Seviye";
+        const outBox = document.getElementById("aiBooksOutput");
+
+        let lessonPool = curatedBooksDB[lesson] || curatedBooksDB["TYT Matematik"];
+        let books = lessonPool[level] || lessonPool["Temel Seviye"] || [];
+
+        let badgeClass = level === "Temel Seviye" ? "b-konu" : (level === "Orta Seviye" ? "b-deneme" : "b-test");
+
+        let html = books.map(b => `
+            <div class="book-rec-card">
+                <div class="book-rec-header">
+                    <span class="book-rec-title">📘 ${b.name}</span>
+                    <span class="slot-badge ${badgeClass}">${level}</span>
+                </div>
+                <div class="book-rec-desc">${b.desc}</div>
+                <div class="book-rec-target">🎯 Kimler Çözmeli: ${b.target}</div>
+            </div>
+        `).join("");
+
+        outBox.innerHTML = html;
+    }
+
+    /* 🧠 GEMINI 2.5 FLASH API ENTEGRASYONU */
+    function saveApiKeyToSystem() {
+        const key = document.getElementById("uiApiKeyInput").value.trim();
+        if (!key) return alert("API Key gir kral!");
+        localStorage.setItem("yks_panel_gemini_key", key);
+        alert("✅ Gemini API Key Kaydedildi!");
+    }
+    function loadSavedApiKey() {
+        const saved = localStorage.getItem("yks_panel_gemini_key");
+        if (saved) document.getElementById("uiApiKeyInput").value = saved;
+    }
+
+    function compilePromptData(mode) {
+        const startHour = document.getElementById("userStartHourInput").value.trim() || "08:30";
+        const blockCount = parseInt(document.getElementById("userDailyBlockCount").value) || 3;
+        const stage = document.getElementById("userWorkStage").value;
+
+        let savedMap = JSON.parse(localStorage.getItem("yks_saved_topic_checkboxes")) || {};
+        let completedList = [];
+        for (let k in savedMap) { if (savedMap[k]) completedList.push(k.replace("||", " - ")); }
+
+        let missedPool = JSON.parse(localStorage.getItem("yks_v54_missed_pool")) || [];
+        let missedInstruction = missedPool.length > 0 ?
+            `🚨 ÖNCELİKLİ TELAFİ DERSLERİ (Öğrenci geçen hafta şu derslere çalışamadı ve çarpı attı, bunları yeni haftanın ilk günlerine MUTLAKA yerleştir): ${missedPool.join(" | ")}` :
+            `Geçen haftadan kalan telafi dersi yok.`;
+
+        let stageRatioText = "";
+        if (stage === "STAGE_1") {
+            stageRatioText = "1. Faz (Altyapı): Haftanın %60'ı 'Konu Çalışması', %25'i 'Test Çözümü', Cumartesi 'Aktif Konu Tekrarı', Pazar 1 adet 'Branş Denemesi' olsun.";
+        } else if (stage === "STAGE_2") {
+            stageRatioText = "2. Faz (Gelişim): Haftanın %40'ı 'Konu Çalışması', %30'u 'Test Çözümü', Çarşamba ve Cumartesi 'Branş Denemesi', Pazar günü ise 'Genel Deneme' ve 'Aktif Konu Tekrarı' olsun.";
+        } else {
+            stageRatioText = "3. Faz (Derece): Haftada 3 gün 'Branş Denemesi', Hafta sonu 'Genel Deneme', kalan bloklarda yoğun 'Test Çözümü' ve 'Aktif Konu Tekrarı' olsun.";
+        }
+
+        if (mode === 'weekly') {
+            return `Sen elite bir YKS Sayısal Derece Koçusun.
+SADECE SAYISAL VE GEOMETRİ DERSLERİ (TYT/AYT Matematik, Geometri, Fizik, Kimya, Biyoloji ve TYT Türkçe). Tarih, Coğrafya veya Spor seansı KESİNLİKLE YAZMA!
+
+Biten Konular (Bunları ASLA verme): ${completedList.join(", ") || "Yok"}
+${missedInstruction}
+Stratejik Oran Kuralı: ${stageRatioText}
+Günlük Blok Sayısı: Her gün için SADECE ${blockCount} adet blok üret (b1 .. b${blockCount}). Günlük başlangıç saati: ${startHour}.
+
+Tablonun otomatik dolması için PAZARTESİ'den PAZAR'a 7 günün tamamını içeren şu şablonu eksiksiz üret:
+
+MATRIX_DATA_START
+b1|pazartesi|Konu Çalışması: TYT Matematik - Sayı Basamakları
+b2|pazartesi|Test Çözümü: TYT Geometri - Özel Üçgenler
+b1|sali|Branş Denemesi: TYT Fen Bilimleri Denemesi + Analiz
+b1|cumartesi|Genel Deneme: Türkiye Geneli TYT Deneme Sınavı
+b2|pazar|Aktif Konu Tekrarı: Haftalık Hata ve Formül Tekrarı
+MATRIX_DATA_END`;
+        }
+
+        if (mode === 'mock_analysis') {
+            let history = JSON.parse(localStorage.getItem("yks_mock_exams_history")) || [];
+            if (history.length === 0) return "Öğrenci henüz deneme girmedi.";
+            let latest = history[0];
+            let detailsStr = latest.details.map(d => `${d.name}: ${d.d}D / ${d.y}Y (${d.net} Net)`).join(", ");
+            return `YKS Sayısal Derece Koçusun. Öğrencinin son denemesi (${latest.name} - ${latest.type}): Toplam ${latest.totalNet} Net. Detaylar: ${detailsStr}.
+Görev: Hangi derste bilgi eksikliği, hangi derste dikkat hatası var teşhis et. TYT Sosyal dahil tüm branşları değerlendir ve bu hafta hangi dersten kaç branş denemesi ve hangi konu tekrarlarını yapması gerektiğini 5 net maddede reçete et!`;
+        }
+
+        if (mode === 'question') {
+            return `YKS Sayısal Koçusun. Biten konular hariç (${completedList.join(", ")}) sıradaki sayısal ve geometri konularından öğrencinin bu hafta kaçar soru çözmesi gerektiğini SADECE soru adetleriyle madde madde listele.`;
+        }
+
+        if (mode === 'books') {
+            const l = document.getElementById("bookLessonSelect").value;
+            const lv = document.getElementById("levelSelect").value;
+            return `YKS Sayısal Koçusun. Ders: "${l}", Seviye: "${lv}". Bu ders ve seviye için piyasadaki en iyi 3 gerçek kaynak kitabı; Kitap Adı, Çözüm Sırası ve Neden Çözülmeli açıklamasıyla madde madde çok düzenli yaz.`;
+        }
+
+        if (mode === 'station_notes' || mode === 'station_tactics') {
+            const l = document.getElementById("stationLessonSelect").value;
+            const t = document.getElementById("stationTopicSelect").value;
+            return `Ders: ${l}, Konu: ${t}. Bu konunun ÖSYM'de en çok çıkan kritik formüllerini, şifrelerini ve soru çözüm taktiklerini ultra net maddeler halinde yaz.`;
+        }
+
+        if (mode === 'motivation') return `Tıp ve Mühendislik hedefleyen sayısal öğrencine masada odağını zirveye çıkaracak sert, disiplinli 4 maddelik koç konuşması yap.`;
+        if (mode === 'weekly_novel') return `Epik fantastik veya bilim kurgu (LotR, GoT, Malazan, Dune tarzı) 1 adet efsane kitap öner ve kısaca neden okunması gerektiğini anlat.`;
+        if (mode === 'culture') return `Tıp, nörobilim veya uzay mühendisliğiyle ilgili zihin açıcı 1 bilimsel gerçeği maddeler halinde anlat.`;
+    }
+
+    function cleanMarkdownToHtml(text) {
+        if (!text) return "";
+        return text
+            .replace(/\*\*(.*?)\*\*/g, "<strong style='color:var(--gold)'>$1</strong>")
+            .replace(/###\s?(.*)/g, "<h4>📌 $1</h4>")
+            .replace(/##\s?(.*)/g, "<h3>🎯 $1</h3>")
+            .replace(/-\s(.*)/g, "<li>✔ $1</li>")
+            .split("\n").map(l => l.trim() ? (l.startsWith("<h") || l.startsWith("<li") ? l : `<p style="margin-bottom:6px;">${l}</p>`) : "").join("");
+    }
+
+    async function runLiveGeminiAI(mode) {
+        let outBox, cacheKey;
+        if (mode === 'mock_analysis') { outBox = document.getElementById("aiMockAnalysisOutput"); cacheKey = "yks_v54_cache_mock"; }
+        else if (mode === 'question') { outBox = document.getElementById("aiQuestionOutput"); cacheKey = "yks_v54_cache_q"; }
+        else if (mode === 'books') { outBox = document.getElementById("aiBooksOutput"); cacheKey = "yks_v54_cache_books"; }
+        else if (mode.startsWith('station_')) { outBox = document.getElementById("aiStationOutput"); cacheKey = "yks_v54_cache_st"; }
+        else if (mode !== 'weekly') { outBox = document.getElementById("aiCultureOutput"); cacheKey = "yks_v54_cache_cul"; }
+
+        let apiKey = localStorage.getItem("yks_panel_gemini_key") || document.getElementById("uiApiKeyInput").value.trim();
+        if (!apiKey) return alert("⚠️ Kral sağ üst köşeden Gemini API anahtarını girip Kaydet'e basmalısın!");
+
+        const genBtn = document.getElementById("btnGenerateWeekly");
+        if (mode === 'weekly' && genBtn) genBtn.innerText = "⚡ Program Kuruluyor...";
+        if (outBox) outBox.innerHTML = `<div class="coach-box">⚡ Gemini 2.5 Koçu verileri işliyor...</div>`;
+
+        const promptText = compilePromptData(mode);
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+            });
+            const data = await response.json();
+            if (mode === 'weekly' && genBtn) genBtn.innerText = "⚡ AI İle Yeni Haftayı Kur";
+
+            if (data.error) {
+                if (outBox) outBox.innerHTML = `<div class="coach-box">❌ API Hatası: ${data.error.message}</div>`;
+                else alert("API Hatası: " + data.error.message);
+                return;
+            }
+            let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+            if (mode === 'weekly') {
+                let matrixPart = rawText;
+                if (rawText.includes("MATRIX_DATA_START")) {
+                    matrixPart = rawText.split("MATRIX_DATA_START")[1].split("MATRIX_DATA_END")[0];
+                }
+                fillScheduleFromAI(matrixPart);
+                return;
+            }
+
+            let html = cleanMarkdownToHtml(rawText);
+            if (outBox) {
+                outBox.innerHTML = mode === 'books' ? `<div class="coach-box">${html}</div>` : html;
+                localStorage.setItem(cacheKey, outBox.innerHTML);
+            }
+        } catch (e) {
+            if (mode === 'weekly' && genBtn) genBtn.innerText = "⚡ AI İle Yeni Haftayı Kur";
+            if (outBox) outBox.innerHTML = "❌ Bağlantı hatası oluştu kral, tekrar dene.";
+        }
+    }
+
+    function fillScheduleFromAI(matrixText) {
+        for (let b = 1; b <= 5; b++) {
+            gunlerList.forEach(gun => {
+                let cellId = `cell-b${b}-${gun}`;
+                document.getElementById(cellId).innerText = "";
+                localStorage.removeItem(`yks_v54_${cellId}`);
+                localStorage.removeItem(`yks_v54_status_${cellId}`);
+                applySlotStatusVisual(cellId, "none");
+                updateBadgeVisual(cellId, "");
+            });
+        }
+
+        const lines = matrixText.split("\n");
+        lines.forEach(line => {
+            if (!line.includes("|")) return;
+            let parts = line.split("|").map(p => p.trim());
+            if (parts.length >= 3) {
+                let bCode = parts[0].toLowerCase();
+                if (!bCode.startsWith("b")) bCode = "b1";
+                let g = parts[1].toLowerCase().replace(/ı/g,"i").replace(/ş/g,"s").replace(/ç/g,"c");
+                let content = parts.slice(2).join(" | ");
+                let cellId = `cell-${bCode}-${g}`;
+                let el = document.getElementById(cellId);
+                if (el) {
+                    el.innerText = content;
+                    localStorage.setItem(`yks_v54_${cellId}`, content);
+                    updateBadgeVisual(cellId, content);
+                }
+            }
+        });
+        updateScheduleStatsAndMissedPool();
+    }
+
+    function loadSavedAIOutputs() {
+        const map = {
+            "yks_v54_cache_mock": "aiMockAnalysisOutput",
+            "yks_v54_cache_q": "aiQuestionOutput",
+            "yks_v54_cache_st": "aiStationOutput",
+            "yks_v54_cache_cul": "aiCultureOutput"
+        };
+        for (let k in map) {
+            let val = localStorage.getItem(k);
+            if (val && document.getElementById(map[k])) document.getElementById(map[k]).innerHTML = val;
+        }
+    }
+
+    /* 📈 DENEME TAKİP SİSTEMİ */
+    function renderMockSubjectInputs() {
+        const type = document.getElementById("mockTypeSelect").value;
+        const container = document.getElementById("mockSubjectInputsContainer");
+        container.innerHTML = "";
+        mockSubjectsConfig[type].forEach(sub => {
+            container.innerHTML += `
+                <div class="mock-sub-card">
+                    <h5><span>${sub.name}</span> <span>(${sub.max})</span></h5>
+                    <div class="dy-row">
+                        <input type="number" id="md_${sub.id}" placeholder="D" min="0" max="${sub.max}" oninput="calcLiveMock()">
+                        <input type="number" id="my_${sub.id}" placeholder="Y" min="0" max="${sub.max}" oninput="calcLiveMock()">
+                    </div>
+                    <div id="mnet_${sub.id}" style="font-size:0.74rem; color:var(--teal); font-weight:700; margin-top:5px; text-align:right;">0.00 Net</div>
+                </div>
+            `;
+        });
+        calcLiveMock();
+    }
+
+    function calcLiveMock() {
+        const type = document.getElementById("mockTypeSelect").value;
+        let total = 0;
+        mockSubjectsConfig[type].forEach(sub => {
+            let d = parseFloat(document.getElementById(`md_${sub.id}`)?.value) || 0;
+            let y = parseFloat(document.getElementById(`my_${sub.id}`)?.value) || 0;
+            let n = d - (y / 4);
+            total += n;
+            let netEl = document.getElementById(`mnet_${sub.id}`);
+            if (netEl) netEl.innerText = `${n.toFixed(2)} Net`;
+        });
+        document.getElementById("liveCalculatedMockNet").innerText = `Toplam Net: ${total.toFixed(2)}`;
+    }
+
+    function saveMockExamResult() {
+        const type = document.getElementById("mockTypeSelect").value;
+        const name = document.getElementById("mockNameInput").value.trim() || `${type} Genel Deneme`;
+        let totalD = 0, totalY = 0, totalNet = 0, details = [];
+
+        mockSubjectsConfig[type].forEach(sub => {
+            let d = parseInt(document.getElementById(`md_${sub.id}`)?.value) || 0;
+            let y = parseInt(document.getElementById(`my_${sub.id}`)?.value) || 0;
+            let n = d - (y / 4);
+            totalD += d; totalY += y; totalNet += n;
+            details.push({ name: sub.name, d, y, net: parseFloat(n.toFixed(2)) });
+        });
+
+        if (totalD === 0 && totalY === 0) return alert("Kral doğru ve yanlış sayılarını gir!");
+        let history = JSON.parse(localStorage.getItem("yks_mock_exams_history")) || [];
+        history.unshift({ date: new Date().toLocaleDateString("tr-TR"), type, name, details, totalNet: parseFloat(totalNet.toFixed(2)) });
+        localStorage.setItem("yks_mock_exams_history", JSON.stringify(history));
+        document.getElementById("mockNameInput").value = "";
+        renderMockSubjectInputs();
+        renderMockHistoryTable();
+    }
+
+    function deleteMockExam(idx) {
+        let history = JSON.parse(localStorage.getItem("yks_mock_exams_history")) || [];
+        history.splice(idx, 1);
+        localStorage.setItem("yks_mock_exams_history", JSON.stringify(history));
+        renderMockHistoryTable();
+    }
+
+    function renderMockHistoryTable() {
+        const tbody = document.getElementById("mockHistoryTableBody");
+        let history = JSON.parse(localStorage.getItem("yks_mock_exams_history")) || [];
+        tbody.innerHTML = "";
+
+        if (history.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Henüz deneme kaydı yok.</td></tr>`;
+            return;
+        }
+
+        history.forEach((h, i) => {
+            let tags = h.details.map(d => `<span style="background:var(--bg-card); padding:2px 5px; border-radius:4px; margin:2px; display:inline-block; font-size:0.72rem;"><b>${d.name.split(" ")[1]}:</b> ${d.net}N</span>`).join("");
+            tbody.innerHTML += `
+                <tr>
+                    <td>${h.date}</td>
+                    <td><span class="slot-badge ${h.type==='TYT'?'b-konu':'b-test'}">${h.type}</span></td>
+                    <td><b>${h.name}</b></td>
+                    <td>${tags}</td>
+                    <td><strong style="color:var(--gold);">${h.totalNet} Net</strong></td>
+                    <td><button class="btn btn-danger" style="padding:3px 7px;" onclick="deleteMockExam(${i})">Sil</button></td>
+                </tr>
+            `;
+        });
+    }
+
+    /* 📚 MÜFREDAT AĞACI VE KONU TİKLEME */
+    function renderSeparateSubjects() {
+        const tytBox = document.getElementById("tytSubjectsContainer");
+        const aytBox = document.getElementById("aytSubjectsContainer");
+        let tHtml = "", aHtml = "", idC = 0;
+
+        for (let d in tytMüfredat) {
+            let sid = "acc_t_" + (idC++);
+            tHtml += `<div class="acc-header" onclick="toggleAcc('${sid}')"><span>${d}</span><span>▼</span></div><div class="acc-body" id="${sid}">`;
+            tytMüfredat[d].forEach(k => {
+                tHtml += `<label class="topic-row"><input type="checkbox" class="topic-check" data-ders="${d}" data-topic="${k}" onchange="saveTopicChecks()"><span>${k}</span></label>`;
+            });
+            tHtml += `</div>`;
+        }
+        tytBox.innerHTML = tHtml;
+
+        for (let d in aytMüfredat) {
+            let sid = "acc_a_" + (idC++);
+            aHtml += `<div class="acc-header" style="border-left-color:var(--indigo)" onclick="toggleAcc('${sid}')"><span>${d}</span><span>▼</span></div><div class="acc-body" id="${sid}">`;
+            aytMüfredat[d].forEach(k => {
+                aHtml += `<label class="topic-row"><input type="checkbox" class="topic-check" data-ders="${d}" data-topic="${k}" onchange="saveTopicChecks()"><span>${k}</span></label>`;
+            });
+            aHtml += `</div>`;
+        }
+        aytBox.innerHTML = aHtml;
+    }
+
+    function toggleAcc(id) {
+        const el = document.getElementById(id);
+        el.style.display = (el.style.display === "block") ? "none" : "block";
+    }
+
+    function saveTopicChecks() {
+        let map = {};
+        document.querySelectorAll('.topic-check').forEach(cb => {
+            map[cb.getAttribute('data-ders') + "||" + cb.getAttribute('data-topic')] = cb.checked;
+        });
+        localStorage.setItem("yks_saved_topic_checkboxes", JSON.stringify(map));
+        calculateCurrentLevel();
+    }
+
+    function loadSavedTopicChecks() {
+        let map = JSON.parse(localStorage.getItem("yks_saved_topic_checkboxes")) || {};
+        document.querySelectorAll('.topic-check').forEach(cb => {
+            let k = cb.getAttribute('data-ders') + "||" + cb.getAttribute('data-topic');
+            if (map[k] !== undefined) cb.checked = map[k];
+        });
+    }
+
+    function calculateCurrentLevel() {
+        let tTot = 0, tDone = 0, aTot = 0, aDone = 0;
+        document.querySelectorAll('.topic-check').forEach(cb => {
+            if (cb.getAttribute('data-ders').startsWith("TYT")) { tTot++; if (cb.checked) tDone++; }
+            else { aTot++; if (cb.checked) aDone++; }
+        });
+        let tp = tTot ? Math.round((tDone / tTot) * 100) : 0;
+        let ap = aTot ? Math.round((aDone / aTot) * 100) : 0;
+        let avg = Math.round((tp + ap) / 2);
+
+        document.getElementById("tytLevelPercent").innerText = `%${tp}`;
+        document.getElementById("aytLevelPercent").innerText = `%${ap}`;
+        document.getElementById("ringCurrPercent").innerText = `%${avg}`;
+        document.getElementById("ringCurrText").innerText = `TYT %${tp} | AYT %${ap}`;
+    }
+
+    function updateStationLessons() {
+        const type = document.getElementById("stationExamType").value;
+        const lSel = document.getElementById("stationLessonSelect");
+        lSel.innerHTML = "";
+        const pool = type === "TYT" ? tytMüfredat : aytMüfredat;
+        Object.keys(pool).forEach(d => lSel.innerHTML += `<option value="${d}">${d}</option>`);
+        updateStationTopics();
+    }
+
+    function updateStationTopics() {
+        const type = document.getElementById("stationExamType").value;
+        const d = document.getElementById("stationLessonSelect").value;
+        const tSel = document.getElementById("stationTopicSelect");
+        tSel.innerHTML = "";
+        const pool = type === "TYT" ? tytMüfredat : aytMüfredat;
+        (pool[d] || []).forEach(t => tSel.innerHTML += `<option value="${t}">${t}</option>`);
+    }
+
+    /* 🏛️ GENİŞLETİLMİŞ YÖK ATLAS SİMÜLATÖRÜ */
+    function runUniSimulator() {
+        let tyt = parseFloat(document.getElementById("simTytNet").value) || 0;
+        let ayt = parseFloat(document.getElementById("simAytNet").value) || 0;
+        let obp = parseFloat(document.getElementById("simObpInput").value) || 85;
+
+        let score = 100 + (tyt * 1.32) + (ayt * 3.0) + (obp * 0.6);
+        let rank = 150000;
+        if (score >= 535) rank = Math.max(30, Math.round(1500 - (score - 535) * 90));
+        else if (score >= 510) rank = Math.round(1500 + (535 - score) * 220);
+        else if (score >= 485) rank = Math.round(7000 + (510 - score) * 520);
+        else if (score >= 460) rank = Math.round(20000 + (485 - score) * 850);
+        else rank = Math.round(41250 + (460 - score) * 1800);
+
+        document.getElementById("simResultText").innerText = `${score.toFixed(2)} Puan (~#${rank.toLocaleString('tr-TR')})`;
+        renderUniTable(rank);
+    }
+
+    function renderUniTable(userRank = 20000) {
+        const q = (document.getElementById("uniSearchInput").value || "").toLowerCase();
+        const dept = document.getElementById("uniDeptFilter").value;
+        const tbody = document.getElementById("uniTableBody");
+        tbody.innerHTML = "";
+
+        let filtered = yokAtlasData.filter(u => {
+            let matchQ = u.uni.toLowerCase().includes(q) || u.city.toLowerCase().includes(q) || u.dept.toLowerCase().includes(q);
+            let matchD = true;
+            if (dept === "Tıp Fakültesi") matchD = u.dept.includes("Tıp");
+            else if (dept === "Bilgisayar") matchD = u.dept.includes("Bilgisayar") || u.dept.includes("Yapay Zeka") || u.dept.includes("Yazılım");
+            else if (dept === "Mühendislik") matchD = u.dept.includes("Mühendis");
+            else if (dept === "Diş Hekimliği") matchD = u.dept.includes("Diş");
+            else if (dept === "Eczacılık") matchD = u.dept.includes("Eczacılık");
+            return matchQ && matchD;
+        });
+
+        document.getElementById("atlasCountBadge").innerText = `${filtered.length} Program Listeleniyor`;
+
+        filtered.forEach(u => {
+            let badge = userRank <= u.rank ?
+                `<span class="slot-badge b-konu">✅ YERLEŞİYORSUN</span>` :
+                (userRank <= u.rank + 5000 ? `<span class="slot-badge b-deneme">🔥 ÇOK YAKIN (+${(userRank - u.rank).toLocaleString('tr-TR')})</span>` : `<span class="slot-badge b-test">⚡ HEDEF MENZİLİ</span>`);
+            tbody.innerHTML += `
+                <tr>
+                    <td><b>${u.uni}</b></td>
+                    <td>${u.city}</td>
+                    <td>${u.dept}</td>
+                    <td><strong style="color:var(--gold)">${u.score.toFixed(2)}</strong></td>
+                    <td><b>#${u.rank.toLocaleString('tr-TR')}</b></td>
+                    <td>${badge}</td>
+                </tr>
+            `;
+        });
+    }
+</script>
+</body>
+</html>
